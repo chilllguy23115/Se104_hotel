@@ -269,7 +269,6 @@ def check_admin_role(x_role: str = Header(None)):
         raise HTTPException(status_code=403, detail="Bạn không có quyền thực hiện hành động này")
     return x_role
 
-
 # ==========================================
 # 5. ROUTES
 # ==========================================
