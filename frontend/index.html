@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Manager Pro - Windows Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        #auth-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: #f3f3f3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 400px;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #cbd5e1;
+        }
+
+        .mica-effect {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+        }
+
+        .hidden-section {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body class="flex h-screen overflow-hidden bg-[#f3f3f3]">
+
+    <!-- Auth Screen (Login & Register) -->
+    <div id="auth-screen">
+        <!-- Login Form -->
+        <div id="login-form" class="auth-card animate-slide-in">
+            <div class="flex flex-col items-center mb-10">
+                <div class="p-4 bg-blue-600 rounded-2xl shadow-xl mb-4">
+                    <i data-lucide="hotel" class="w-10 h-10 text-white"></i>
+                </div>
+                <h2 class="text-2xl font-black text-gray-800">Đăng nhập</h2>
+                <p class="text-gray-400 text-sm">Chào mừng bạn quay trở lại</p>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Tên đăng
+                        nhập</label>
+                    <input type="text" id="login-user"
+                        class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                        placeholder="admin hoặc staff">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Mật
+                        khẩu</label>
+                    <input type="password" id="login-pass"
+                        class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                        placeholder="••••••••">
+                </div>
+                <button onclick="handleLogin()"
+                    class="w-full py-4 bg-blue-600 text-white rounded-lg font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all mt-4">Đăng
+                    nhập</button>
+            </div>
+            <div class="mt-6 text-center">
+                <button onclick="toggleAuth('register')" class="text-xs font-bold text-blue-600 hover:underline">Chưa có
+                    tài khoản? Đăng ký ngay</button>
+            </div>
+        </div>
+
+        <!-- Register Form -->
+        <div id="register-form" class="auth-card animate-slide-in hidden-section">
+            <div class="flex flex-col items-center mb-10">
+                <div class="p-4 bg-indigo-600 rounded-2xl shadow-xl mb-4">
+                    <i data-lucide="user-plus" class="w-10 h-10 text-white"></i>
+                </div>
+                <h2 class="text-2xl font-black text-gray-800">Đăng ký mới</h2>
+                <p class="text-gray-400 text-sm">Tạo tài khoản quản lý hoặc nhân viên</p>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Tên đăng
+                        nhập</label>
+                    <input type="text" id="reg-user"
+                        class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Mật
+                        khẩu</label>
+                    <input type="password" id="reg-pass"
+                        class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Chức
+                        vụ</label>
+                    <select id="reg-role"
+                        class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                        <option value="RECEPTIONIST">Lễ tân</option>
+                        <option value="ADMIN">Quản lý</option>
+                    </select>
+                </div>
+                <button onclick="handleRegister()"
+                    class="w-full py-4 bg-indigo-600 text-white rounded-lg font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition-all mt-4">Đăng
+                    ký tài khoản</button>
+            </div>
+            <div class="mt-6 text-center">
+                <button onclick="toggleAuth('login')" class="text-xs font-bold text-indigo-600 hover:underline">Đã có
+                    tài khoản? Đăng nhập</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside id="main-sidebar" class="w-72 bg-[#f3f3f3] border-r border-gray-200 flex flex-col pt-4 hidden-section">
+        <div class="px-8 py-4 mb-6">
+            <div class="flex items-center gap-3 text-blue-600">
+                <div class="p-2 bg-blue-600 rounded-lg shadow-lg">
+                    <i data-lucide="hotel" class="w-6 h-6 text-white"></i>
+                </div>
+                <h1 class="text-xl font-bold text-gray-800 tracking-tight">Hotel Pro</h1>
+            </div>
+        </div>
+
+        <nav class="flex-1 px-4 space-y-1">
+            <div class="px-4 mb-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Nghiệp vụ</div>
+            <a href="javascript:void(0)" onclick="showSection('rooms')" id="nav-rooms"
+                class="sidebar-item active flex items-center gap-4 p-3 text-sm rounded-lg">
+                <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                <span>Sơ đồ phòng</span>
+            </a>
+            <div id="admin-nav" class="hidden-section">
+                <div class="px-4 mt-8 mb-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Quản trị</div>
+                <a href="javascript:void(0)" onclick="showSection('prices')" id="nav-prices"
+                    class="sidebar-item flex items-center gap-4 p-3 text-sm rounded-lg">
+                    <i data-lucide="tags" class="w-5 h-5"></i>
+                    <span>Cấu hình giá</span>
+                </a>
+                <a href="javascript:void(0)" onclick="showSection('services-config')" id="nav-services-config"
+                    class="sidebar-item flex items-center gap-4 p-3 text-sm rounded-lg">
+                    <i data-lucide="coffee" class="w-5 h-5"></i>
+                    <span>Quản lý dịch vụ</span>
+                </a>
+                <a href="javascript:void(0)" onclick="showSection('staff')" id="nav-staff"
+                    class="sidebar-item flex items-center gap-4 p-3 text-sm rounded-lg">
+                    <i data-lucide="users" class="w-5 h-5"></i>
+                    <span>Quản lý nhân viên</span>
+                </a>
+                <a href="javascript:void(0)" onclick="showSection('reports')" id="nav-reports"
+                    class="sidebar-item flex items-center gap-4 p-3 text-sm rounded-lg">
+                    <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+                    <span>Báo cáo doanh thu</span>
+                </a>
+                <a href="javascript:void(0)" onclick="showSection('invoices')" id="nav-invoices"
+                    class="sidebar-item flex items-center gap-4 p-3 text-sm rounded-lg">
+                    <i data-lucide="history" class="w-5 h-5"></i>
+                    <span>Lịch sử hóa đơn</span>
+                </a>
+            </div>
+        </nav>
+
+        <div class="p-6 border-t border-gray-200 mt-auto">
+            <div class="flex items-center justify-between p-3 bg-white rounded-xl border border-gray-200 shadow-sm">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600"><i
+                            data-lucide="user" class="w-5 h-5"></i></div>
+                    <div>
+                        <p id="user-display-name" class="text-xs font-bold text-gray-800">User</p>
+                        <p id="user-display-role" class="text-[10px] text-gray-500 uppercase font-medium">Role</p>
+                    </div>
+                </div>
+                <button onclick="logout()"
+                    class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"><i
+                        data-lucide="log-out" class="w-4 h-4"></i></button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main id="main-content" class="flex-1 flex flex-col bg-white relative hidden-section">
+        <!-- Sections are same as before -->
+        <div id="section-rooms" class="flex-1 flex flex-col overflow-hidden">
+            <header class="h-20 mica-effect border-b border-gray-200 flex items-center justify-between px-10">
+                <h2 class="text-2xl font-bold text-gray-800">Sơ đồ phòng</h2>
+                <button onclick="fetchRooms()"
+                    class="p-2.5 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-600 hover:text-white transition-all shadow-sm"><i
+                        data-lucide="rotate-cw" class="w-5 h-5"></i></button>
+            </header>
+            <div class="flex-1 overflow-y-auto p-10 bg-[#fbfbfb]">
+                <div id="rooms-container" class="flex flex-col gap-12">
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Thêm Phòng -->
+        <div id="add-room-modal"
+            class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden border border-gray-200">
+                <div class="p-6 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+                    <h3 class="font-bold text-gray-800">Thêm phòng mới - Tầng <span id="add-room-floor-label"></span>
+                    </h3>
+                    <button onclick="closeAddRoomModal()" class="p-1 hover:bg-gray-200 rounded-full"><i data-lucide="x"
+                            class="w-5 h-5 text-gray-400"></i></button>
+                </div>
+                <div class="p-8 space-y-4">
+                    <input type="hidden" id="add-room-floor">
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase">Tên phòng (Số phòng)</label>
+                        <input type="text" id="add-room-number"
+                            class="w-full px-4 py-2.5 bg-gray-50 border rounded-lg outline-none" placeholder="P.101">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase">Loại phòng</label>
+                        <select id="add-room-category"
+                            class="w-full px-4 py-2.5 bg-gray-50 border rounded-lg outline-none"></select>
+                    </div>
+                </div>
+                <div class="p-6 bg-gray-50 border-t border-gray-200 flex justify-end gap-3">
+                    <button onclick="closeAddRoomModal()" class="win-btn win-btn-secondary">Hủy</button>
+                    <button onclick="confirmAddRoom()" class="win-btn win-btn-primary">Tạo phòng</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Room Pricing -->
+        <div id="section-prices" class="flex-1 flex flex-col overflow-hidden hidden-section">
+            <header class="h-20 mica-effect border-b border-gray-200 flex items-center justify-between px-10">
+                <h2 class="text-2xl font-bold text-gray-800">Cấu hình giá phòng</h2>
+            </header>
+            <div class="flex-1 p-10 bg-[#fbfbfb] overflow-y-auto">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <table class="w-full text-left">
+                        <thead class="bg-gray-50 border-b border-gray-200">
+                            <tr>
+                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Loại phòng</th>
+                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Giờ đầu</th>
+                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Giờ tiếp</th>
+                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Qua đêm</th>
+                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Ngày</th>
+                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase text-right">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="prices-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Services Config -->
+        <div id="section-services-config" class="flex-1 flex flex-col overflow-hidden hidden-section">
+            <header class="h-20 mica-effect border-b border-gray-200 flex items-center justify-between px-10">
+                <h2 class="text-2xl font-bold text-gray-800">Quản lý dịch vụ (Minibar)</h2>
+                <button onclick="openServiceConfigModal()" class="win-btn win-btn-primary flex items-center gap-2">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i> Thêm dịch vụ mới
+                </button>
+            </header>
+            <div class="flex-1 p-10 bg-[#fbfbfb] overflow-y-auto">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <table class="w-full text-left">
+                        <thead class="bg-gray-50 border-b border-gray-200">
+                            <tr>
+                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Tên dịch vụ</th>
+                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Giá tiền</th>
+                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase text-right">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="services-config-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="section-staff" class="flex-1 flex flex-col overflow-hidden hidden-section">
+            <header class="h-20 mica-effect border-b border-gray-200 flex items-center px-10">
+                <h2 class="text-2xl font-bold text-gray-800">Quản lý nhân viên</h2>
+            </header>
+            <div class="flex-1 p-10 bg-[#fbfbfb] overflow-y-auto">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <table class="w-full text-left">
+                        <thead class="bg-gray-50 border-b border-gray-200">
+                            <tr>
+                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase">ID</th>
+                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Tên đăng nhập</th>
+                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Chức vụ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="staff-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="section-reports" class="flex-1 flex flex-col overflow-hidden hidden-section">
+            <header class="h-20 mica-effect border-b border-gray-200 flex items-center px-10">
+                <h2 class="text-2xl font-bold text-gray-800">Báo cáo doanh thu</h2>
+            </header>
+            <div class="flex-1 p-10 bg-[#fbfbfb] overflow-y-auto">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
+                        <p class="text-xs font-bold text-gray-400 uppercase mb-2">Tổng doanh thu</p>
+                        <h3 id="stat-total-revenue" class="text-3xl font-black text-blue-600">0đ</h3>
+                    </div>
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
+                        <p class="text-xs font-bold text-gray-400 uppercase mb-2">Tiền phòng</p>
+                        <h3 id="stat-room-revenue" class="text-3xl font-black text-green-600">0đ</h3>
+                    </div>
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
+                        <p class="text-xs font-bold text-gray-400 uppercase mb-2">Tiền dịch vụ</p>
+                        <h3 id="stat-service-revenue" class="text-3xl font-black text-orange-600">0đ</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Invoice History -->
+        <div id="section-invoices" class="flex-1 flex flex-col overflow-hidden hidden-section">
+            <header class="h-20 mica-effect border-b border-gray-200 flex items-center justify-between px-10">
+                <h2 class="text-2xl font-bold text-gray-800">Lịch sử hóa đơn</h2>
+            </header>
+            <div class="flex-1 p-10 bg-[#fbfbfb] overflow-y-auto" id="invoices-container">
+                <!-- Grouped invoices will appear here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Modals (Checkin, Service) same as before -->
+    <div id="checkin-modal"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-200">
+            <div class="p-6 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="font-bold text-gray-800 flex items-center gap-2"><i data-lucide="log-in"
+                        class="w-5 h-5 text-blue-600"></i> Nhận phòng <span id="modal-room-number"
+                        class="text-blue-600"></span></h3><button onclick="closeModal()"
+                    class="p-1 hover:bg-gray-200 rounded-full"><i data-lucide="x"
+                        class="w-5 h-5 text-gray-400"></i></button>
+            </div>
+            <div class="p-8 space-y-4">
+                <div class="space-y-1"><label class="text-[10px] font-bold text-gray-500 uppercase">Họ tên</label><input
+                        type="text" id="guest-name"
+                        class="w-full px-4 py-2.5 bg-gray-50 border rounded-lg outline-none"></div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1"><label class="text-[10px] font-bold text-gray-500 uppercase">Số
+                            CCCD</label><input type="text" id="guest-id"
+                            class="w-full px-4 py-2.5 bg-gray-50 border rounded-lg outline-none"></div>
+                    <div class="space-y-1"><label class="text-[10px] font-bold text-gray-500 uppercase">Ngày
+                            sinh</label><input type="date" id="guest-dob"
+                            class="w-full px-4 py-2.5 bg-gray-50 border rounded-lg outline-none"></div>
+                </div>
+                <div class="space-y-1"><label class="text-[10px] font-bold text-gray-500 uppercase">Hình thức
+                        thuê</label><select id="rental-type"
+                        class="w-full px-4 py-2.5 bg-gray-50 border rounded-lg outline-none">
+                        <option value="HOURLY">Thuê theo giờ</option>
+                        <option value="OVERNIGHT">Thuê qua đêm</option>
+                        <option value="DAILY">Thuê theo ngày</option>
+                    </select></div>
+            </div>
+            <div class="p-6 bg-gray-50 border-t border-gray-200 flex justify-end gap-3"><button onclick="closeModal()"
+                    class="win-btn win-btn-secondary">Hủy</button><button onclick="confirmCheckIn()"
+                    class="win-btn win-btn-primary">Xác nhận</button></div>
+        </div>
+    </div>
+
+    <!-- Modal Dịch vụ -->
+    <div id="service-modal"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden border border-gray-200">
+            <div class="p-6 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="font-bold text-gray-800">Thêm dịch vụ</h3>
+                <button onclick="closeServiceModal()" class="p-1 hover:bg-gray-200 rounded-full"><i data-lucide="x"
+                        class="w-5 h-5 text-gray-400"></i></button>
+            </div>
+            <div class="flex h-[450px]">
+                <!-- Danh sách dịch vụ bên trái -->
+                <div class="flex-1 p-6 overflow-y-auto border-r">
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Danh mục dịch vụ</p>
+                    <div id="services-list" class="space-y-3"></div>
+                </div>
+                <!-- Danh sách đã chọn bên phải -->
+                <div class="w-72 bg-gray-50/50 p-6 flex flex-col">
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Đã chọn</p>
+                    <div id="selected-services-list" class="flex-1 overflow-y-auto space-y-2 mb-4">
+                        <p class="text-xs text-gray-400 italic text-center py-10">Chưa chọn dịch vụ nào</p>
+                    </div>
+                    <div class="pt-4 border-t space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold text-gray-500 uppercase">Tạm tính</span>
+                            <span id="selected-services-total" class="font-black text-indigo-600">0đ</span>
+                        </div>
+                        <button onclick="confirmBatchServices()"
+                            class="w-full py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition-all">Xác
+                            nhận thêm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Chỉnh Dịch Vụ -->
+    <div id="service-config-modal"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-200">
+            <div class="p-6 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="font-bold text-gray-800" id="service-modal-title">Thêm dịch vụ</h3>
+                <button onclick="closeServiceConfigModal()" class="p-1 hover:bg-gray-200 rounded-full"><i
+                        data-lucide="x" class="w-5 h-5 text-gray-400"></i></button>
+            </div>
+            <div class="p-8 space-y-4">
+                <input type="hidden" id="edit-service-id">
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase">Tên dịch vụ</label>
+                    <input type="text" id="edit-service-name"
+                        class="w-full px-4 py-2.5 bg-gray-50 border rounded-lg outline-none"
+                        placeholder="Ví dụ: Sting đỏ">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase">Giá bán (VNĐ)</label>
+                    <input type="number" id="edit-service-price" min="1"
+                        class="w-full px-4 py-2.5 bg-gray-50 border rounded-lg outline-none" placeholder="15000">
+                </div>
+            </div>
+            <div class="p-6 bg-gray-50 border-t border-gray-200 flex justify-end gap-3">
+                <button onclick="closeServiceConfigModal()" class="win-btn win-btn-secondary">Hủy</button>
+                <button onclick="saveServiceConfig()" class="win-btn win-btn-primary">Lưu thông tin</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Chỉnh Giá -->
+    <div id="price-modal"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-200">
+            <div class="p-6 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="font-bold text-gray-800">Chỉnh sửa giá: <span id="edit-cat-name"
+                        class="text-blue-600"></span></h3>
+                <button onclick="closePriceModal()" class="p-1 hover:bg-gray-200 rounded-full"><i data-lucide="x"
+                        class="w-5 h-5 text-gray-400"></i></button>
+            </div>
+            <div class="p-8 space-y-4">
+                <input type="hidden" id="edit-cat-id">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1"><label class="text-[10px] font-bold text-gray-500 uppercase">Giờ
+                            đầu</label><input type="number" id="edit-p1" min="0"
+                            class="w-full px-4 py-2.5 bg-gray-50 border rounded-lg outline-none"></div>
+                    <div class="space-y-1"><label class="text-[10px] font-bold text-gray-500 uppercase">Giờ tiếp
+                            theo</label><input type="number" id="edit-p2" min="0"
+                            class="w-full px-4 py-2.5 bg-gray-50 border rounded-lg outline-none"></div>
+                    <div class="space-y-1"><label class="text-[10px] font-bold text-gray-500 uppercase">Qua
+                            đêm</label><input type="number" id="edit-p3" min="0"
+                            class="w-full px-4 py-2.5 bg-gray-50 border rounded-lg outline-none"></div>
+                    <div class="space-y-1"><label class="text-[10px] font-bold text-gray-500 uppercase">Theo
+                            ngày</label><input type="number" id="edit-p4" min="0"
+                            class="w-full px-4 py-2.5 bg-gray-50 border rounded-lg outline-none"></div>
+                </div>
+            </div>
+            <div class="p-6 bg-gray-50 border-t border-gray-200 flex justify-end gap-3">
+                <button onclick="closePriceModal()" class="win-btn win-btn-secondary">Hủy</button>
+                <button onclick="confirmUpdatePrice()" class="win-btn win-btn-primary">Lưu thay đổi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Hóa Đơn Chi Tiết -->
+    <div id="bill-modal"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+        <div
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-gray-200 animate-slide-in">
+            <div class="p-6 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                    <i data-lucide="receipt" class="w-5 h-5 text-green-600"></i>
+                    Chi tiết hóa đơn thanh toán
+                </h3>
+                <button onclick="closeBillModal()" class="p-1 hover:bg-gray-200 rounded-full">
+                    <i data-lucide="x" class="w-5 h-5 text-gray-400"></i>
+                </button>
+            </div>
+
+            <div class="p-8 space-y-6" id="bill-content">
+                <!-- Bill details will be loaded here -->
+            </div>
+
+            <div class="p-6 bg-gray-50 border-t border-gray-200 flex justify-end gap-3">
+                <button onclick="closeBillModal()" class="win-btn win-btn-secondary">Để sau</button>
+                <button id="confirm-payment-btn"
+                    class="win-btn win-btn-primary bg-green-600 hover:bg-green-700 shadow-green-100">Xác nhận thanh
+                    toán</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="source/app.js"></script>
+</body>
+
+</html>
