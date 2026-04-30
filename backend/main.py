@@ -12,10 +12,7 @@ from sqlalchemy import create_engine, String, Integer, ForeignKey, DateTime, fun
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship, sessionmaker, Session
 from contextlib import asynccontextmanager
 
-
-# ==========================================
 # 1. ENUMS & CẤU HÌNH DATABASE
-# ==========================================
 class UserRoleEnum(str, Enum):
     ADMIN = "ADMIN"
     RECEPTIONIST = "RECEPTIONIST"
