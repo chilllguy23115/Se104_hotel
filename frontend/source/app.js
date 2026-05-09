@@ -67,7 +67,7 @@ function loginSuccess(user) {
 function logout() { localStorage.removeItem('hotel_user'); window.location.reload(); }
 
 function showSection(sectionId) {
-    ['rooms', 'prices', 'services-config', 'invoices', 'staff', 'reports'].forEach(s => {
+    ['rooms', 'prices', 'services-config', 'invoices', 'staff', 'reports', 'shift', 'shift-history'].forEach(s => {
         const el = document.getElementById(`section-${s}`);
         const nav = document.getElementById(`nav-${s}`);
         if (el) el.classList.add('hidden-section');
@@ -84,6 +84,8 @@ function showSection(sectionId) {
     if (sectionId === 'invoices') fetchInvoices();
     if (sectionId === 'staff') fetchStaff();
     if (sectionId === 'reports') fetchRevenue();
+    if (sectionId === 'shift') fetchCurrentShift();
+    if (sectionId === 'shift-history') fetchShiftHistory();
 }
 
 // --- Invoice History Logic ---
@@ -112,15 +114,17 @@ async function fetchInvoices() {
                     <div class="h-px flex-1 bg-gray-200"></div>
                 </div>
                 <div class="space-y-2">
-                    ${groups[date].map(inv => `
+                    ${groups[date].map(inv => {
+                        const pMethod = inv.payment_method === 'CASH' ? 'Tiền mặt' : 'Chuyển khoản';
+                        return `
                         <div onclick="openBillModal(${inv.id})" class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:border-blue-300 hover:shadow-md transition-all cursor-pointer flex items-center justify-between group">
                             <div class="flex items-center gap-4">
                                 <div class="p-2 bg-gray-50 rounded-lg group-hover:bg-blue-50 transition-colors">
                                     <i data-lucide="file-text" class="w-5 h-5 text-gray-400 group-hover:text-blue-600"></i>
                                 </div>
                                 <div>
-                                    <p class="font-bold text-gray-800">Phòng ${inv.room_id} (HĐ #${inv.id})</p>
-                                    <p class="text-[10px] text-gray-400 uppercase font-bold">Khách: ${inv.guest_name || 'N/A'}</p>
+                                    <p class="font-bold text-gray-800">Phòng ${inv.room_number} (HĐ #${inv.id})</p>
+                                    <p class="text-[10px] text-gray-400 uppercase font-bold">Khách: ${inv.guest_name || 'N/A'} • NV: ${inv.username} • ${pMethod}</p>
                                 </div>
                             </div>
                             <div class="text-right">
@@ -128,7 +132,7 @@ async function fetchInvoices() {
                                 <p class="text-[10px] text-gray-500">${new Date(inv.check_out_time).toLocaleTimeString('vi-VN')}</p>
                             </div>
                         </div>
-                    `).join('')}
+                    `}).join('')}
                 </div>
             `;
             container.appendChild(dateGroup);
@@ -150,6 +154,7 @@ async function fetchServicesConfig() {
             row.innerHTML = `
                 <td class="px-6 py-4 font-bold text-gray-800">${s.name}</td>
                 <td class="px-6 py-4">${s.price.toLocaleString()}đ</td>
+                <td class="px-6 py-4"><span class="px-2 py-1 ${s.stock_quantity < 5 ? 'bg-red-50 text-red-600' : 'bg-gray-50 text-gray-600'} rounded text-xs font-bold">${s.stock_quantity}</span></td>
                 <td class="px-6 py-4 text-right flex justify-end gap-2">
                     <button onclick='openServiceConfigModal(${JSON.stringify(s)})' class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg">
                         <i data-lucide="edit-3" class="w-4 h-4"></i>
@@ -171,17 +176,20 @@ function openServiceConfigModal(svc = null) {
     const idInput = document.getElementById('edit-service-id');
     const nameInput = document.getElementById('edit-service-name');
     const priceInput = document.getElementById('edit-service-price');
+    const stockInput = document.getElementById('edit-service-stock');
 
     if (svc) {
         title.innerText = "Chỉnh sửa dịch vụ";
         idInput.value = svc.id;
         nameInput.value = svc.name;
         priceInput.value = svc.price;
+        stockInput.value = svc.stock_quantity;
     } else {
         title.innerText = "Thêm dịch vụ mới";
         idInput.value = "";
         nameInput.value = "";
         priceInput.value = "";
+        stockInput.value = "0";
     }
     modal.classList.remove('hidden');
 }
@@ -192,6 +200,7 @@ async function saveServiceConfig() {
     const id = document.getElementById('edit-service-id').value;
     const name = document.getElementById('edit-service-name').value;
     const price = document.getElementById('edit-service-price').value;
+    const stock = document.getElementById('edit-service-stock').value;
     if (!name || !price) return alert("Vui lòng nhập đủ thông tin!");
 
     const method = id ? 'PUT' : 'POST';
@@ -200,7 +209,7 @@ async function saveServiceConfig() {
     const res = await fetch(url, {
         method: method,
         headers: { 'Content-Type': 'application/json', 'X-Role': currentUser.role },
-        body: JSON.stringify({ name: name, price: parseInt(price) })
+        body: JSON.stringify({ name: name, price: parseInt(price), stock_quantity: parseInt(stock) })
     });
 
     if (res.ok) { closeServiceConfigModal(); fetchServicesConfig(); } else { alert("Lỗi khi lưu dịch vụ!"); }
@@ -457,10 +466,22 @@ async function openBillModal(bookingId) {
         `;
 
         const btn = document.getElementById('confirm-payment-btn');
+        const payContainer = document.getElementById('payment-method-container');
+
         if (data.status === 'COMPLETED') {
             btn.classList.add('hidden');
+            payContainer.classList.add('hidden');
+            // Show payment method used
+            const pMethod = data.payment_method === 'CASH' ? 'Tiền mặt' : 'Chuyển khoản';
+            content.insertAdjacentHTML('beforeend', `
+                <div class="mt-4 p-4 bg-gray-50 rounded-xl border border-dashed border-gray-300">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase">Phương thức đã thanh toán</p>
+                    <p class="font-bold text-gray-800">${pMethod}</p>
+                </div>
+            `);
         } else {
             btn.classList.remove('hidden');
+            payContainer.classList.remove('hidden');
             btn.onclick = () => confirmCheckOut(bookingId);
         }
         lucide.createIcons();
@@ -471,12 +492,124 @@ function closeBillModal() { document.getElementById('bill-modal').classList.add(
 
 async function confirmCheckOut(bookingId) {
     try {
-        const res = await fetch(`${API_URL}/bookings/${bookingId}/check-out`, { method: 'POST' });
+        const method = document.querySelector('input[name="pay-method"]:checked').value;
+        const res = await fetch(`${API_URL}/bookings/${bookingId}/check-out`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ payment_method: method })
+        });
         if (res.ok) {
             alert("Thanh toán thành công! Phòng đã chuyển sang trạng thái chờ dọn.");
             closeBillModal();
             fetchRooms();
         }
+    } catch (e) { console.error(e); }
+}
+
+// --- SHIFT LOGIC ---
+async function fetchCurrentShift() {
+    const container = document.getElementById('shift-status-container');
+    container.innerHTML = '<div class="text-center py-20 text-gray-400">Đang kiểm tra ca trực...</div>';
+    try {
+        const res = await fetch(`${API_URL}/shifts/current/${currentUser.id}`);
+        const shift = await res.json();
+        
+        if (!shift) {
+            container.innerHTML = `
+                <div class="bg-white p-10 rounded-3xl border border-gray-200 shadow-xl text-center">
+                    <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6 text-gray-300">
+                        <i data-lucide="coffee" class="w-10 h-10"></i>
+                    </div>
+                    <h3 class="text-2xl font-black text-gray-800 mb-2">Bạn chưa bắt đầu ca</h3>
+                    <p class="text-gray-400 mb-8">Vui lòng bắt đầu ca trực để ghi nhận doanh thu.</p>
+                    <button onclick="startShift()" class="w-full py-4 bg-blue-600 text-white rounded-xl font-bold shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all">Bắt đầu ca trực mới</button>
+                </div>
+            `;
+        } else {
+            container.innerHTML = `
+                <div class="bg-white p-10 rounded-3xl border border-gray-200 shadow-xl">
+                    <div class="flex items-center justify-between mb-10">
+                        <div>
+                            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Ca trực hiện tại</p>
+                            <h3 class="text-2xl font-black text-gray-800">${shift.username}</h3>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Bắt đầu lúc</p>
+                            <p class="font-bold text-gray-800">${new Date(shift.start_time).toLocaleString('vi-VN')}</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-6 mb-10">
+                        <div class="p-6 bg-green-50 rounded-2xl border border-green-100">
+                            <p class="text-[10px] font-black text-green-600 uppercase tracking-widest mb-2">Tiền mặt</p>
+                            <p class="text-3xl font-black text-green-700">${shift.total_cash.toLocaleString()}đ</p>
+                        </div>
+                        <div class="p-6 bg-blue-50 rounded-2xl border border-blue-100">
+                            <p class="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-2">Chuyển khoản</p>
+                            <p class="text-3xl font-black text-blue-700">${shift.total_transfer.toLocaleString()}đ</p>
+                        </div>
+                    </div>
+
+                    <div class="p-6 bg-gray-50 rounded-2xl border border-gray-200 mb-10">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-bold text-gray-500 uppercase">Tổng cộng doanh thu</span>
+                            <span class="text-3xl font-black text-gray-800">${(shift.total_cash + shift.total_transfer).toLocaleString()}đ</span>
+                        </div>
+                    </div>
+
+                    <button onclick="endShift()" class="w-full py-4 bg-red-600 text-white rounded-xl font-bold shadow-lg shadow-red-100 hover:bg-red-700 transition-all flex items-center justify-center gap-2">
+                        <i data-lucide="log-out" class="w-5 h-5"></i>
+                        Kết thúc ca & Chốt tiền
+                    </button>
+                </div>
+            `;
+        }
+        lucide.createIcons();
+    } catch (e) { console.error(e); }
+}
+
+async function startShift() {
+    try {
+        const res = await fetch(`${API_URL}/shifts/start/${currentUser.id}`, { method: 'POST' });
+        if (res.ok) fetchCurrentShift();
+    } catch (e) { console.error(e); }
+}
+
+async function endShift() {
+    if (!confirm("Bạn có chắc chắn muốn kết thúc ca và chốt tiền không?")) return;
+    try {
+        const res = await fetch(`${API_URL}/shifts/end/${currentUser.id}`, { method: 'POST' });
+        if (res.ok) {
+            const data = await res.json();
+            alert(`CA TRỰC ĐÃ KẾT THÚC\n-------------------\n${data.report}`);
+            fetchCurrentShift();
+        }
+    } catch (e) { console.error(e); }
+}
+
+async function fetchShiftHistory() {
+    try {
+        const res = await fetch(`${API_URL}/admin/shifts`, { headers: { 'X-Role': currentUser.role } });
+        const shifts = await res.json();
+        const tbody = document.getElementById('shift-history-table-body');
+        tbody.innerHTML = '';
+        shifts.forEach(s => {
+            const row = document.createElement('tr');
+            row.className = "border-b hover:bg-gray-50 transition-all text-sm";
+            row.innerHTML = `
+                <td class="px-6 py-4 font-bold text-gray-800">${s.username}</td>
+                <td class="px-6 py-4 text-gray-500">${new Date(s.start_time).toLocaleString('vi-VN')}</td>
+                <td class="px-6 py-4 text-gray-500">${s.end_time ? new Date(s.end_time).toLocaleString('vi-VN') : '---'}</td>
+                <td class="px-6 py-4 font-bold text-green-600">${s.total_cash.toLocaleString()}đ</td>
+                <td class="px-6 py-4 font-bold text-blue-600">${s.total_transfer.toLocaleString()}đ</td>
+                <td class="px-6 py-4">
+                    <span class="px-2 py-1 rounded-full text-[10px] font-black uppercase ${s.status === 'OPEN' ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-400'}">
+                        ${s.status === 'OPEN' ? 'Đang trực' : 'Đã kết thúc'}
+                    </span>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
     } catch (e) { console.error(e); }
 }
 
@@ -494,12 +627,83 @@ async function fetchStaff() {
     lucide.createIcons();
 }
 
+let revenueChart = null;
+let categoryChart = null;
+let paymentChart = null;
+
 async function fetchRevenue() {
     const res = await fetch(`${API_URL}/admin/revenue`, { headers: { 'X-Role': currentUser.role } });
     const data = await res.json();
+    
     document.getElementById('stat-total-revenue').innerText = data.total_revenue.toLocaleString('vi-VN') + "đ";
     document.getElementById('stat-room-revenue').innerText = data.room_revenue.toLocaleString('vi-VN') + "đ";
     document.getElementById('stat-service-revenue').innerText = data.service_revenue.toLocaleString('vi-VN') + "đ";
+
+    // 1. Biểu đồ Doanh thu 7 ngày
+    if (revenueChart) revenueChart.destroy();
+    const revCtx = document.getElementById('revenue-chart').getContext('2d');
+    revenueChart = new Chart(revCtx, {
+        type: 'line',
+        data: {
+            labels: data.daily_stats.map(s => s.date),
+            datasets: [{
+                label: 'Doanh thu',
+                data: data.daily_stats.map(s => s.amount),
+                borderColor: '#2563eb',
+                backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                fill: true,
+                tension: 0.4,
+                pointRadius: 4,
+                pointBackgroundColor: '#2563eb'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, grid: { display: false } }, x: { grid: { display: false } } }
+        }
+    });
+
+    // 2. Biểu đồ Cơ cấu Phòng/Dịch vụ
+    if (categoryChart) categoryChart.destroy();
+    const catCtx = document.getElementById('category-chart').getContext('2d');
+    categoryChart = new Chart(catCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Tiền phòng', 'Dịch vụ'],
+            datasets: [{
+                data: [data.room_revenue, data.service_revenue],
+                backgroundColor: ['#22c55e', '#f97316'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom' } }
+        }
+    });
+
+    // 3. Biểu đồ Phương thức thanh toán
+    if (paymentChart) paymentChart.destroy();
+    const payCtx = document.getElementById('payment-chart').getContext('2d');
+    paymentChart = new Chart(payCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Tiền mặt', 'Chuyển khoản'],
+            datasets: [{
+                data: [data.cash_revenue, data.transfer_revenue],
+                backgroundColor: ['#3b82f6', '#8b5cf6'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom' } }
+        }
+    });
 }
 
 function openCheckIn(id, num) { currentRoomId = id; document.getElementById('modal-room-number').innerText = num; document.getElementById('checkin-modal').classList.remove('hidden'); }
@@ -530,7 +734,10 @@ async function openServiceModal(bookingId) {
             item.innerHTML = `
                 <div>
                     <p class="font-bold text-gray-800">${s.name}</p>
-                    <p class="text-xs font-black text-indigo-500">${s.price.toLocaleString('vi-VN')}đ</p>
+                    <div class="flex gap-2 items-center">
+                        <span class="text-xs font-black text-indigo-500">${s.price.toLocaleString('vi-VN')}đ</span>
+                        <span class="text-[10px] font-bold ${s.stock_quantity > 0 ? 'text-amber-500' : 'text-red-500'} uppercase">Kho: ${s.stock_quantity}</span>
+                    </div>
                 </div>
                 <div class="flex items-center gap-2">
                     <div class="flex items-center border rounded-lg bg-gray-50">
@@ -538,7 +745,7 @@ async function openServiceModal(bookingId) {
                         <input type="number" id="qty-input-${s.id}" value="1" class="w-8 text-center bg-transparent border-none text-xs font-bold focus:ring-0 p-0" min="1">
                         <button onclick="updateQtyInList(${s.id}, 1)" class="p-1.5 hover:text-indigo-600"><i data-lucide="plus" class="w-3.5 h-3.5"></i></button>
                     </div>
-                    <button onclick="addToSelection(${s.id})" class="p-2.5 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-600 hover:text-white transition-all shadow-sm">
+                    <button onclick="addToSelection(${s.id})" class="p-2.5 ${s.stock_quantity > 0 ? 'bg-indigo-50 text-indigo-600' : 'bg-gray-100 text-gray-300 pointer-events-none'} rounded-lg hover:bg-indigo-600 hover:text-white transition-all shadow-sm">
                         <i data-lucide="shopping-cart" class="w-4 h-4"></i>
                     </button>
                 </div>
@@ -559,7 +766,15 @@ function updateQtyInList(id, delta) {
 function addToSelection(serviceId) {
     const qty = parseInt(document.getElementById(`qty-input-${serviceId}`).value);
     const service = allServices.find(s => s.id === serviceId);
+    
+    // Kiểm tra tồn kho tại chỗ
     const existing = selectedServices.find(s => s.id === serviceId);
+    const currentTotal = (existing ? existing.quantity : 0) + qty;
+    
+    if (currentTotal > service.stock_quantity) {
+        return alert(`Không đủ hàng! ${service.name} trong kho chỉ còn ${service.stock_quantity}`);
+    }
+
     if (existing) {
         existing.quantity += qty;
     } else {
@@ -615,6 +830,9 @@ async function confirmBatchServices() {
             closeServiceModal();
             alert("Đã thêm dịch vụ thành công!");
             fetchRooms();
+        } else {
+            const err = await res.json();
+            alert(err.detail || "Lỗi khi thêm dịch vụ!");
         }
     } catch (e) { console.error(e); }
 }

@@ -7,6 +7,7 @@
     <title>Hotel Manager Pro - Windows Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <style>
@@ -155,6 +156,10 @@
                 class="sidebar-item active flex items-center gap-4 p-3 text-sm rounded-lg">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                 <span>Sơ đồ phòng</span>
+            <a href="javascript:void(0)" onclick="showSection('shift')" id="nav-shift"
+                class="sidebar-item flex items-center gap-4 p-3 text-sm rounded-lg">
+                <i data-lucide="clock" class="w-5 h-5"></i>
+                <span>Giao ca & Chốt tiền</span>
             </a>
             <div id="admin-nav" class="hidden-section">
                 <div class="px-4 mt-8 mb-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Quản trị</div>
@@ -182,6 +187,11 @@
                     class="sidebar-item flex items-center gap-4 p-3 text-sm rounded-lg">
                     <i data-lucide="history" class="w-5 h-5"></i>
                     <span>Lịch sử hóa đơn</span>
+                </a>
+                <a href="javascript:void(0)" onclick="showSection('shift-history')" id="nav-shift-history"
+                    class="sidebar-item flex items-center gap-4 p-3 text-sm rounded-lg">
+                    <i data-lucide="archive" class="w-5 h-5"></i>
+                    <span>Lịch sử ca trực</span>
                 </a>
             </div>
         </nav>
@@ -288,6 +298,7 @@
                             <tr>
                                 <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Tên dịch vụ</th>
                                 <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Giá tiền</th>
+                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Tồn kho</th>
                                 <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase text-right">Thao tác</th>
                             </tr>
                         </thead>
@@ -324,17 +335,75 @@
             <div class="flex-1 p-10 bg-[#fbfbfb] overflow-y-auto">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
                     <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
-                        <p class="text-xs font-bold text-gray-400 uppercase mb-2">Tổng doanh thu</p>
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Tổng doanh thu</p>
                         <h3 id="stat-total-revenue" class="text-3xl font-black text-blue-600">0đ</h3>
                     </div>
                     <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
-                        <p class="text-xs font-bold text-gray-400 uppercase mb-2">Tiền phòng</p>
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Tiền phòng</p>
                         <h3 id="stat-room-revenue" class="text-3xl font-black text-green-600">0đ</h3>
                     </div>
                     <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
-                        <p class="text-xs font-bold text-gray-400 uppercase mb-2">Tiền dịch vụ</p>
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Tiền dịch vụ</p>
                         <h3 id="stat-service-revenue" class="text-3xl font-black text-orange-600">0đ</h3>
                     </div>
+                </div>
+
+                <!-- Biểu đồ -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm col-span-1 lg:col-span-2">
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6">Doanh thu 7 ngày gần nhất</p>
+                        <div class="h-80">
+                            <canvas id="revenue-chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm">
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6">Cơ cấu doanh thu</p>
+                        <div class="h-64 flex justify-center">
+                            <canvas id="category-chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm">
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6">Hình thức thanh toán</p>
+                        <div class="h-64 flex justify-center">
+                            <canvas id="payment-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Shift Management -->
+        <div id="section-shift" class="flex-1 flex flex-col overflow-hidden hidden-section">
+            <header class="h-20 mica-effect border-b border-gray-200 flex items-center justify-between px-10">
+                <h2 class="text-2xl font-bold text-gray-800">Giao ca & Chốt tiền</h2>
+            </header>
+            <div class="flex-1 p-10 bg-[#fbfbfb] overflow-y-auto">
+                <div id="shift-status-container" class="max-w-2xl mx-auto">
+                    <!-- Shift info will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Shift History (Admin) -->
+        <div id="section-shift-history" class="flex-1 flex flex-col overflow-hidden hidden-section">
+            <header class="h-20 mica-effect border-b border-gray-200 flex items-center justify-between px-10">
+                <h2 class="text-2xl font-bold text-gray-800">Lịch sử ca trực</h2>
+            </header>
+            <div class="flex-1 p-10 bg-[#fbfbfb] overflow-y-auto">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                    <table class="w-full text-left">
+                        <thead class="bg-gray-50 border-b border-gray-200">
+                            <tr>
+                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Nhân viên</th>
+                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Bắt đầu</th>
+                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Kết thúc</th>
+                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Tiền mặt</th>
+                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Chuyển khoản</th>
+                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody id="shift-history-table-body"></tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -444,6 +513,11 @@
                     <input type="number" id="edit-service-price" min="1"
                         class="w-full px-4 py-2.5 bg-gray-50 border rounded-lg outline-none" placeholder="15000">
                 </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase">Số lượng tồn kho</label>
+                    <input type="number" id="edit-service-stock" min="0"
+                        class="w-full px-4 py-2.5 bg-gray-50 border rounded-lg outline-none" placeholder="100">
+                </div>
             </div>
             <div class="p-6 bg-gray-50 border-t border-gray-200 flex justify-end gap-3">
                 <button onclick="closeServiceConfigModal()" class="win-btn win-btn-secondary">Hủy</button>
@@ -501,8 +575,24 @@
                 </button>
             </div>
 
-            <div class="p-8 space-y-6" id="bill-content">
-                <!-- Bill details will be loaded here -->
+            <div class="p-8 space-y-6">
+                <div id="bill-content">
+                    <!-- Bill details will be loaded here -->
+                </div>
+                
+                <div id="payment-method-container" class="space-y-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Phương thức thanh toán</p>
+                    <div class="flex gap-6">
+                        <label class="flex items-center gap-2 cursor-pointer group">
+                            <input type="radio" name="pay-method" value="CASH" checked class="w-4 h-4 text-blue-600">
+                            <span class="text-sm font-bold text-gray-700 group-hover:text-blue-600 transition-colors">Tiền mặt</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer group">
+                            <input type="radio" name="pay-method" value="TRANSFER" class="w-4 h-4 text-blue-600">
+                            <span class="text-sm font-bold text-gray-700 group-hover:text-blue-600 transition-colors">Chuyển khoản</span>
+                        </label>
+                    </div>
+                </div>
             </div>
 
             <div class="p-6 bg-gray-50 border-t border-gray-200 flex justify-end gap-3">

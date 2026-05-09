@@ -1,4 +1,4 @@
-from datetime import datetime, timezone, date
+from datetime import datetime, timezone, date, timedelta
 import math
 import re
 import os
@@ -30,6 +30,14 @@ class RentalTypeEnum(str, Enum):
 class BookingStatusEnum(str, Enum):
     ACTIVE = "ACTIVE"
     COMPLETED = "COMPLETED"
+
+class PaymentMethodEnum(str, Enum):
+    CASH = "CASH"
+    TRANSFER = "TRANSFER"
+
+class ShiftStatusEnum(str, Enum):
+    OPEN = "OPEN"
+    CLOSED = "CLOSED"
 
 # Đường dẫn tới thư mục database
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -74,6 +82,7 @@ class Service(Base):
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     name: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
     price: Mapped[int] = mapped_column(Integer, nullable=False)
+    stock_quantity: Mapped[int] = mapped_column(Integer, default=0) # Thêm tồn kho
 
 class Booking(Base):
     __tablename__ = "bookings"
@@ -89,9 +98,11 @@ class Booking(Base):
     room_charge: Mapped[int] = mapped_column(Integer, default=0)
     service_charge: Mapped[int] = mapped_column(Integer, default=0)
     total_amount: Mapped[int] = mapped_column(Integer, default=0)
+    payment_method: Mapped[Optional[PaymentMethodEnum]] = mapped_column(String(20))
     status: Mapped[BookingStatusEnum] = mapped_column(default=BookingStatusEnum.ACTIVE, nullable=False)
     
     room: Mapped["Room"] = relationship(back_populates="bookings")
+    user: Mapped["User"] = relationship()
     services_used: Mapped[List["BookingService"]] = relationship(back_populates="booking", cascade="all, delete-orphan")
 
 class BookingService(Base):
@@ -104,6 +115,18 @@ class BookingService(Base):
     
     booking: Mapped["Booking"] = relationship(back_populates="services_used")
     service: Mapped["Service"] = relationship()
+
+class Shift(Base):
+    __tablename__ = "shifts"
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    start_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    end_time: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    total_cash: Mapped[int] = mapped_column(Integer, default=0)
+    total_transfer: Mapped[int] = mapped_column(Integer, default=0)
+    status: Mapped[ShiftStatusEnum] = mapped_column(default=ShiftStatusEnum.OPEN)
+    
+    user: Mapped["User"] = relationship()
 
 # ==========================================
 # 3. INITIALIZATION & LIFESPAN
@@ -131,10 +154,10 @@ async def lifespan(app: FastAPI):
             ])
             
             db.add_all([
-                Service(name="Sting đỏ", price=15000),
-                Service(name="Coca Cola", price=15000),
-                Service(name="Mì ly", price=20000),
-                Service(name="Nước suối", price=10000),
+                Service(name="Sting đỏ", price=15000, stock_quantity=100),
+                Service(name="Coca Cola", price=15000, stock_quantity=100),
+                Service(name="Mì ly", price=20000, stock_quantity=100),
+                Service(name="Nước suối", price=10000, stock_quantity=100),
             ])
             db.commit()
             print("Database initialized with default data!")
@@ -234,11 +257,23 @@ class RoomCategoryUpdateRequest(BaseModel):
 class ServiceCreateRequest(BaseModel):
     name: str
     price: int
+    stock_quantity: Optional[int] = 0
     @field_validator('price')
     @classmethod
     def validate_price(cls, v):
         if v <= 0: raise ValueError('Giá dịch vụ phải lớn hơn 0')
         return v
+
+class RestockRequest(BaseModel):
+    quantity: int
+    @field_validator('quantity')
+    @classmethod
+    def validate_qty(cls, v):
+        if v <= 0: raise ValueError('Số lượng nhập phải lớn hơn 0')
+        return v
+
+class CheckoutRequest(BaseModel):
+    payment_method: PaymentMethodEnum
 
 class CheckoutResponse(BaseModel):
     booking_id: int
@@ -249,8 +284,18 @@ class CheckoutResponse(BaseModel):
     room_charge: int
     service_charge: int
     total_amount: int
+    payment_method: Optional[str] = None
     service_details: Optional[List[dict]] = None
     status: Optional[str] = None
+
+class ShiftResponse(BaseModel):
+    id: int
+    username: str
+    start_time: datetime
+    end_time: Optional[datetime] = None
+    total_cash: int
+    total_transfer: int
+    status: ShiftStatusEnum
 
 def get_db():
     db = SessionLocal()
@@ -289,10 +334,41 @@ def create_staff(req: UserCreateRequest, db: Session = Depends(get_db), role: st
 
 @app.get("/api/admin/revenue", tags=["Quản lý - Admin"])
 def get_revenue(db: Session = Depends(get_db), role: str = Depends(check_admin_role)):
+    # 1. Tổng quan
     total = db.query(func.sum(Booking.total_amount)).filter(Booking.status == BookingStatusEnum.COMPLETED).scalar() or 0
     room_total = db.query(func.sum(Booking.room_charge)).filter(Booking.status == BookingStatusEnum.COMPLETED).scalar() or 0
     service_total = db.query(func.sum(Booking.service_charge)).filter(Booking.status == BookingStatusEnum.COMPLETED).scalar() or 0
-    return {"total_revenue": total, "room_revenue": room_total, "service_revenue": service_total}
+    
+    # 2. Theo phương thức thanh toán
+    cash_total = db.query(func.sum(Booking.total_amount)).filter(Booking.status == BookingStatusEnum.COMPLETED, Booking.payment_method == PaymentMethodEnum.CASH).scalar() or 0
+    transfer_total = db.query(func.sum(Booking.total_amount)).filter(Booking.status == BookingStatusEnum.COMPLETED, Booking.payment_method == PaymentMethodEnum.TRANSFER).scalar() or 0
+    
+    # 3. Doanh thu 7 ngày gần nhất
+    daily_stats = []
+    for i in range(6, -1, -1):
+        target_date = date.today() - timedelta(days=i)
+        start_dt = datetime.combine(target_date, datetime.min.time())
+        end_dt = datetime.combine(target_date, datetime.max.time())
+        
+        day_revenue = db.query(func.sum(Booking.total_amount)).filter(
+            Booking.status == BookingStatusEnum.COMPLETED,
+            Booking.check_out_time >= start_dt,
+            Booking.check_out_time <= end_dt
+        ).scalar() or 0
+        
+        daily_stats.append({
+            "date": target_date.strftime("%d/%m"),
+            "amount": day_revenue
+        })
+        
+    return {
+        "total_revenue": total,
+        "room_revenue": room_total,
+        "service_revenue": service_total,
+        "cash_revenue": cash_total,
+        "transfer_revenue": transfer_total,
+        "daily_stats": daily_stats
+    }
 
 @app.get("/api/admin/room-categories", tags=["Quản lý - Giá"])
 def list_categories(db: Session = Depends(get_db)):
@@ -315,10 +391,18 @@ def list_services(db: Session = Depends(get_db)):
 
 @app.post("/api/admin/services", tags=["Quản lý - Dịch vụ"])
 def create_service(req: ServiceCreateRequest, db: Session = Depends(get_db), role: str = Depends(check_admin_role)):
-    new_service = Service(name=req.name, price=req.price)
+    new_service = Service(name=req.name, price=req.price, stock_quantity=req.stock_quantity)
     db.add(new_service)
     db.commit()
     return {"message": "Thêm dịch vụ thành công"}
+
+@app.post("/api/admin/services/{service_id}/restock", tags=["Quản lý - Dịch vụ"])
+def restock_service(service_id: int, req: RestockRequest, db: Session = Depends(get_db), role: str = Depends(check_admin_role)):
+    svc = db.query(Service).filter(Service.id == service_id).first()
+    if not svc: raise HTTPException(status_code=404, detail="Không thấy dịch vụ")
+    svc.stock_quantity += req.quantity
+    db.commit()
+    return {"message": f"Đã nhập thêm {req.quantity} sản phẩm vào kho", "new_stock": svc.stock_quantity}
 
 @app.put("/api/admin/services/{service_id}", tags=["Quản lý - Dịch vụ"])
 def update_service(service_id: int, req: ServiceCreateRequest, db: Session = Depends(get_db), role: str = Depends(check_admin_role)):
@@ -326,6 +410,7 @@ def update_service(service_id: int, req: ServiceCreateRequest, db: Session = Dep
     if not svc: raise HTTPException(status_code=404, detail="Không thấy dịch vụ")
     svc.name = req.name
     svc.price = req.price
+    svc.stock_quantity = req.stock_quantity
     db.commit()
     return {"message": "Cập nhật thành công"}
 
@@ -339,7 +424,29 @@ def delete_service(service_id: int, db: Session = Depends(get_db), role: str = D
 
 @app.get("/api/admin/invoices", tags=["Quản lý - Admin"])
 def list_invoices(db: Session = Depends(get_db), role: str = Depends(check_admin_role)):
-    return db.query(Booking).filter(Booking.status == BookingStatusEnum.COMPLETED).order_by(Booking.check_out_time.desc()).all()
+    invoices = db.query(Booking).filter(Booking.status == BookingStatusEnum.COMPLETED).order_by(Booking.check_out_time.desc()).all()
+    return [{
+        "id": inv.id,
+        "room_number": inv.room.room_number,
+        "guest_name": inv.guest_name,
+        "total_amount": inv.total_amount,
+        "check_out_time": inv.check_out_time,
+        "payment_method": inv.payment_method,
+        "username": inv.user.username if inv.user else "N/A"  # Kiểm tra nếu inv.user tồn tại
+    } for inv in invoices]
+
+@app.get("/api/admin/shifts", tags=["Quản lý - Admin"])
+def list_shifts(db: Session = Depends(get_db), role: str = Depends(check_admin_role)):
+    shifts = db.query(Shift).order_by(Shift.start_time.desc()).all()
+    return [{
+        "id": s.id,
+        "username": s.user.username,
+        "start_time": s.start_time,
+        "end_time": s.end_time,
+        "total_cash": s.total_cash,
+        "total_transfer": s.total_transfer,
+        "status": s.status
+    } for s in shifts]
 
 @app.post("/api/admin/rooms", tags=["Quản lý - Admin"])
 def create_room(req: RoomCreateRequest, db: Session = Depends(get_db), role: str = Depends(check_admin_role)):
@@ -404,9 +511,17 @@ def add_service_to_booking(booking_id: int, req: AddServiceRequest, db: Session 
     if not booking: raise HTTPException(status_code=404, detail="Hóa đơn không tồn tại")
     service = db.query(Service).filter(Service.id == req.service_id).first()
     if not service: raise HTTPException(status_code=404, detail="Dịch vụ không tồn tại")
+    
+    # Kiểm tra tồn kho
+    if service.stock_quantity < req.quantity:
+        raise HTTPException(status_code=400, detail=f"Sản phẩm {service.name} chỉ còn {service.stock_quantity} trong kho")
+    
+    # Trừ kho
+    service.stock_quantity -= req.quantity
+    
     db.add(BookingService(booking_id=booking.id, service_id=service.id, quantity=req.quantity, price_at_time=service.price))
     db.commit()
-    return {"message": "Thêm dịch vụ thành công"}
+    return {"message": "Thêm dịch vụ và trừ kho thành công"}
 
 @app.post("/api/bookings/{booking_id}/batch-services", tags=["Lễ tân - Nghiệp vụ"])
 def batch_add_services(booking_id: int, req: BatchServicesRequest, db: Session = Depends(get_db)):
@@ -416,6 +531,14 @@ def batch_add_services(booking_id: int, req: BatchServicesRequest, db: Session =
     for item in req.services:
         service = db.query(Service).filter(Service.id == item.service_id).first()
         if not service: continue
+        
+        # Kiểm tra tồn kho cho từng món
+        if service.stock_quantity < item.quantity:
+            raise HTTPException(status_code=400, detail=f"Sản phẩm {service.name} không đủ tồn kho (còn {service.stock_quantity})")
+        
+        # Trừ kho
+        service.stock_quantity -= item.quantity
+        
         db.add(BookingService(
             booking_id=booking.id,
             service_id=service.id,
@@ -424,7 +547,7 @@ def batch_add_services(booking_id: int, req: BatchServicesRequest, db: Session =
         ))
     
     db.commit()
-    return {"message": "Đã thêm các dịch vụ thành công"}
+    return {"message": "Đã thêm các dịch vụ và cập nhật kho thành công"}
 
 @app.get("/api/bookings/{booking_id}/preview", response_model=CheckoutResponse, tags=["Lễ tân - Nghiệp vụ"])
 def preview_bill(booking_id: int, db: Session = Depends(get_db)):
@@ -457,7 +580,7 @@ def preview_bill(booking_id: int, db: Session = Depends(get_db)):
     }
 
 @app.post("/api/bookings/{booking_id}/check-out", response_model=CheckoutResponse, tags=["Lễ tân - Nghiệp vụ"])
-def check_out_room(booking_id: int, db: Session = Depends(get_db)):
+def check_out_room(booking_id: int, req: CheckoutRequest, db: Session = Depends(get_db)):
     booking = db.query(Booking).filter(Booking.id == booking_id).first()
     if not booking or booking.status == BookingStatusEnum.COMPLETED:
         raise HTTPException(status_code=400, detail="Hóa đơn không hợp lệ")
@@ -487,6 +610,7 @@ def check_out_room(booking_id: int, db: Session = Depends(get_db)):
     booking.service_charge = service_charge
     booking.total_amount = room_charge + service_charge
     booking.status = BookingStatusEnum.COMPLETED
+    booking.payment_method = req.payment_method
     room.status = RoomStatusEnum.CLEANING
     
     db.commit()
@@ -494,7 +618,64 @@ def check_out_room(booking_id: int, db: Session = Depends(get_db)):
         "booking_id": booking.id, "room_number": room.room_number, "check_in_time": booking.check_in_time,
         "check_out_time": checkout_time, "hours_stayed": hours_stayed, "room_charge": room_charge,
         "service_charge": service_charge, "total_amount": booking.total_amount,
+        "payment_method": booking.payment_method,
         "service_details": service_details, "status": "COMPLETED"
+    }
+
+# --- SHIFT ENDPOINTS ---
+@app.get("/api/shifts/current/{user_id}", response_model=Optional[ShiftResponse], tags=["Ca trực"])
+def get_current_shift(user_id: int, db: Session = Depends(get_db)):
+    shift = db.query(Shift).filter(Shift.user_id == user_id, Shift.status == ShiftStatusEnum.OPEN).first()
+    if not shift: return None
+    
+    # Tính toán doanh thu tạm tính trong ca
+    bookings = db.query(Booking).filter(
+        Booking.user_id == user_id,
+        Booking.status == BookingStatusEnum.COMPLETED,
+        Booking.check_out_time >= shift.start_time
+    ).all()
+    
+    total_cash = sum(b.total_amount for b in bookings if b.payment_method == PaymentMethodEnum.CASH)
+    total_transfer = sum(b.total_amount for b in bookings if b.payment_method == PaymentMethodEnum.TRANSFER)
+    
+    return {
+        "id": shift.id, "username": shift.user.username, "start_time": shift.start_time,
+        "total_cash": total_cash, "total_transfer": total_transfer, "status": shift.status
+    }
+
+@app.post("/api/shifts/start/{user_id}", tags=["Ca trực"])
+def start_shift(user_id: int, db: Session = Depends(get_db)):
+    active = db.query(Shift).filter(Shift.user_id == user_id, Shift.status == ShiftStatusEnum.OPEN).first()
+    if active: raise HTTPException(status_code=400, detail="Bạn đang có một ca trực chưa kết thúc")
+    
+    new_shift = Shift(user_id=user_id)
+    db.add(new_shift)
+    db.commit()
+    return {"message": "Bắt đầu ca trực thành công"}
+
+@app.post("/api/shifts/end/{user_id}", tags=["Ca trực"])
+def end_shift(user_id: int, db: Session = Depends(get_db)):
+    shift = db.query(Shift).filter(Shift.user_id == user_id, Shift.status == ShiftStatusEnum.OPEN).first()
+    if not shift: raise HTTPException(status_code=400, detail="Không tìm thấy ca trực đang mở")
+    
+    # Chốt tiền
+    bookings = db.query(Booking).filter(
+        Booking.user_id == user_id,
+        Booking.status == BookingStatusEnum.COMPLETED,
+        Booking.check_out_time >= shift.start_time
+    ).all()
+    
+    shift.total_cash = sum(b.total_amount for b in bookings if b.payment_method == PaymentMethodEnum.CASH)
+    shift.total_transfer = sum(b.total_amount for b in bookings if b.payment_method == PaymentMethodEnum.TRANSFER)
+    shift.end_time = datetime.now(timezone.utc)
+    shift.status = ShiftStatusEnum.CLOSED
+    
+    db.commit()
+    return {
+        "message": "Kết thúc ca trực thành công",
+        "total_cash": shift.total_cash,
+        "total_transfer": shift.total_transfer,
+        "report": f"Tổng tiền mặt: {shift.total_cash}đ, Chuyển khoản: {shift.total_transfer}đ"
     }
 
 if __name__ == "__main__":
