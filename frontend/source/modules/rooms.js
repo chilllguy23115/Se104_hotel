@@ -79,7 +79,22 @@ export function createRoomCard(room) {
 
     let deleteBtn = (room.status === 'AVAILABLE' && currentUser.role === 'ADMIN') ? `<button onclick="window.deleteRoom(${room.id})" class="absolute top-2 right-2 p-1.5 bg-white/80 text-red-500 rounded-full opacity-0 group-hover:opacity-100 hover:bg-red-50 transition-all border border-red-100 z-10"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>` : '';
 
-    let actionBtn = room.status === 'AVAILABLE' ? `<button onclick="window.openCheckIn(${room.id}, '${room.room_number}')" class="w-full py-2.5 bg-blue-600 text-white rounded-lg font-bold text-sm">Nhận phòng</button>` : room.status === 'OCCUPIED' ? `<div class="grid grid-cols-2 gap-2"><button onclick="window.openServiceModal(${room.active_booking_id})" class="py-2 bg-indigo-50 text-indigo-600 border rounded-lg font-bold text-xs">Dịch vụ</button><button onclick="window.openBillModal(${room.active_booking_id})" class="py-2 bg-red-600 text-white rounded-lg font-bold text-xs">Trả phòng</button></div>` : `<button onclick="window.finishCleaning(${room.id})" class="w-full py-2.5 bg-amber-500 text-white rounded-lg font-bold text-sm">Dọn xong</button>`;
+    let actionBtn = "";
+    if (currentUser && currentUser.role === 'JANITOR') {
+        if (room.status === 'CLEANING') {
+            actionBtn = `<button onclick="window.finishCleaning(${room.id})" class="w-full py-2.5 bg-amber-500 text-white rounded-lg font-bold text-sm hover:bg-amber-600 transition-all">Dọn xong</button>`;
+        } else {
+            actionBtn = `<button class="w-full py-2.5 bg-gray-100 text-gray-400 rounded-lg font-bold text-sm cursor-not-allowed" disabled>${room.status === 'AVAILABLE' ? 'Phòng trống' : 'Có khách'}</button>`;
+        }
+    } else {
+        if (room.status === 'AVAILABLE') {
+            actionBtn = `<button onclick="window.openCheckIn(${room.id}, '${room.room_number}')" class="w-full py-2.5 bg-blue-600 text-white rounded-lg font-bold text-sm hover:bg-blue-700 transition-all">Nhận phòng</button>`;
+        } else if (room.status === 'OCCUPIED') {
+            actionBtn = `<div class="grid grid-cols-2 gap-2"><button onclick="window.openServiceModal(${room.active_booking_id})" class="py-2 bg-indigo-50 text-indigo-600 border rounded-lg font-bold text-xs hover:bg-indigo-100 transition-all">Dịch vụ</button><button onclick="window.openBillModal(${room.active_booking_id})" class="py-2 bg-red-600 text-white rounded-lg font-bold text-xs hover:bg-red-700 transition-all">Trả phòng</button></div>`;
+        } else {
+            actionBtn = `<button class="w-full py-2.5 bg-gray-100 text-gray-400 rounded-lg font-bold text-sm cursor-not-allowed" disabled>Đang dọn phòng...</button>`;
+        }
+    }
     
     let displayNum = room.room_number;
     if (!String(displayNum).startsWith('P.')) displayNum = 'P.' + displayNum;
@@ -141,6 +156,14 @@ export async function deleteRoom(id) {
 }
 
 export async function finishCleaning(roomId) { 
-    await fetch(`${API_URL}/rooms/${roomId}/clean`, { method: 'POST' }); 
-    fetchRooms(); 
+    const res = await fetch(`${API_URL}/rooms/${roomId}/clean`, { 
+        method: 'POST',
+        headers: getHeaders()
+    }); 
+    if (res.ok) {
+        fetchRooms(); 
+    } else {
+        const err = await res.json();
+        alert(err.detail);
+    }
 }

@@ -5,6 +5,7 @@ import os
 import uvicorn
 from enum import Enum
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from typing import List, Optional
 from fastapi import FastAPI, Depends, HTTPException, status, Header
 from pydantic import BaseModel, field_validator
@@ -16,6 +17,7 @@ from contextlib import asynccontextmanager
 class UserRoleEnum(str, Enum):
     ADMIN = "ADMIN"
     RECEPTIONIST = "RECEPTIONIST"
+    JANITOR = "JANITOR"
 
 class RoomStatusEnum(str, Enum):
     AVAILABLE = "AVAILABLE"
@@ -140,6 +142,7 @@ async def lifespan(app: FastAPI):
         if db.query(User).count() == 0:
             db.add(User(username="admin", password="admin", role=UserRoleEnum.ADMIN))
             db.add(User(username="staff", password="123", role=UserRoleEnum.RECEPTIONIST))
+            db.add(User(username="janitor", password="123", role=UserRoleEnum.JANITOR))
             
             cat_std = RoomCategory(name="STANDARD", price_first_hour=60000, price_next_hour=20000, price_overnight=150000, price_daily=250000)
             cat_vip = RoomCategory(name="VIP", price_first_hour=100000, price_next_hour=40000, price_overnight=250000, price_daily=450000)
@@ -309,6 +312,11 @@ def check_admin_role(x_role: str = Header(None)):
         raise HTTPException(status_code=403, detail="Bạn không có quyền thực hiện hành động này")
     return x_role
 
+def check_janitor_role(x_role: str = Header(None)):
+    if x_role != UserRoleEnum.JANITOR:
+        raise HTTPException(status_code=403, detail="Chỉ lao công mới được thực hiện hành động này")
+    return x_role
+
 # ==========================================
 # 5. ROUTES
 # ==========================================
@@ -318,6 +326,15 @@ def login(req: LoginRequest, db: Session = Depends(get_db)):
     if not user or user.password != req.password:
         raise HTTPException(status_code=401, detail="Tên đăng nhập hoặc mật khẩu không đúng")
     return {"id": user.id, "username": user.username, "role": user.role}
+
+@app.post("/api/register", tags=["Hệ thống"])
+def register(req: UserCreateRequest, db: Session = Depends(get_db)):
+    if db.query(User).filter(User.username == req.username).first():
+        raise HTTPException(status_code=400, detail="Tên đăng nhập đã tồn tại")
+    new_user = User(username=req.username, password=req.password, role=req.role)
+    db.add(new_user)
+    db.commit()
+    return {"message": "Đăng ký thành công"}
 
 @app.get("/api/admin/staff", tags=["Quản lý - Admin"])
 def list_staff(db: Session = Depends(get_db), role: str = Depends(check_admin_role)):
@@ -483,7 +500,7 @@ def get_rooms(db: Session = Depends(get_db)):
     return result
 
 @app.post("/api/rooms/{room_id}/clean", tags=["Lễ tân - Nghiệp vụ"])
-def finish_cleaning(room_id: int, db: Session = Depends(get_db)):
+def finish_cleaning(room_id: int, db: Session = Depends(get_db), role: str = Depends(check_janitor_role)):
     room = db.query(Room).filter(Room.id == room_id).first()
     if not room: raise HTTPException(status_code=404, detail="Không tìm thấy phòng")
     room.status = RoomStatusEnum.AVAILABLE
@@ -677,6 +694,10 @@ def end_shift(user_id: int, db: Session = Depends(get_db)):
         "total_transfer": shift.total_transfer,
         "report": f"Tổng tiền mặt: {shift.total_cash}đ, Chuyển khoản: {shift.total_transfer}đ"
     }
+
+# Mount static files for frontend
+FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
+app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

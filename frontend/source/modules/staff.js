@@ -8,7 +8,7 @@ export async function fetchStaff() {
     staff.forEach(s => {
         const row = document.createElement('tr');
         row.className = "border-b hover:bg-gray-50 transition-all";
-        row.innerHTML = `<td class="px-6 py-4 text-sm text-gray-500">#${s.id}</td><td class="px-6 py-4 text-sm font-bold text-gray-800">${s.username}</td><td class="px-6 py-4"><span class="px-3 py-1 rounded-full text-[10px] font-black uppercase ${s.role === 'ADMIN' ? 'bg-purple-50 text-purple-600' : 'bg-blue-50 text-blue-600'}">${s.role}</span></td>`;
+        row.innerHTML = `<td class="px-6 py-4 text-sm text-gray-500">#${s.id}</td><td class="px-6 py-4 text-sm font-bold text-gray-800">${s.username}</td><td class="px-6 py-4"><span class="px-3 py-1 rounded-full text-[10px] font-black uppercase ${s.role === 'ADMIN' ? 'bg-purple-50 text-purple-600' : s.role === 'JANITOR' ? 'bg-amber-50 text-amber-600' : 'bg-blue-50 text-blue-600'}">${s.role}</span></td>`;
         tbody.appendChild(row);
     });
     lucide.createIcons();
@@ -20,7 +20,7 @@ export async function handleRegister() {
     const role = document.getElementById('reg-role').value;
     if (!user || !pass) return alert("Vui lòng nhập đủ thông tin!");
     try {
-        const res = await fetch(`${API_URL}/admin/staff`, {
+        const res = await fetch(`${API_URL}/register`, {
             method: 'POST',
             headers: getHeaders(),
             body: JSON.stringify({ username: user, password: pass, role: role })
@@ -28,6 +28,9 @@ export async function handleRegister() {
         if (res.ok) {
             alert("Đăng ký thành công! Hãy đăng nhập.");
             window.toggleAuth('login');
-        } else { alert("Tên đăng nhập đã tồn tại!"); }
+        } else { 
+            const err = await res.json();
+            alert(err.detail || "Đã có lỗi xảy ra!"); 
+        }
     } catch (e) { console.error(e); }
 }

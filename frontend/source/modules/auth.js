@@ -46,7 +46,7 @@ export function checkAuth() {
         document.getElementById('main-sidebar').classList.remove('hidden-section');
         document.getElementById('main-content').classList.remove('hidden-section');
         document.getElementById('user-display-name').innerText = currentUser.username;
-        document.getElementById('user-display-role').innerText = currentUser.role === 'ADMIN' ? 'Quản lý' : 'Lễ tân';
+        document.getElementById('user-display-role').innerText = currentUser.role === 'ADMIN' ? 'Quản lý' : currentUser.role === 'JANITOR' ? 'Lao công' : 'Lễ tân';
         if (currentUser.role === 'ADMIN') {
             document.getElementById('admin-nav').classList.remove('hidden-section');
         }
