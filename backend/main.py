@@ -7,17 +7,20 @@ from enum import Enum
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from typing import List, Optional
-from fastapi import FastAPI, Depends, HTTPException, status, Header
+from fastapi import FastAPI, Depends, HTTPException, status, Header, UploadFile, File
 from pydantic import BaseModel, field_validator
 from sqlalchemy import create_engine, String, Integer, ForeignKey, DateTime, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship, sessionmaker, Session
 from contextlib import asynccontextmanager
+import shutil
+import uuid
 
 # 1. ENUMS & CẤU HÌNH DATABASE
 class UserRoleEnum(str, Enum):
     ADMIN = "ADMIN"
     RECEPTIONIST = "RECEPTIONIST"
     JANITOR = "JANITOR"
+    GUEST = "GUEST"
 
 class RoomStatusEnum(str, Enum):
     AVAILABLE = "AVAILABLE"
@@ -76,6 +79,9 @@ class Room(Base):
     floor: Mapped[int] = mapped_column(Integer, default=1)
     status: Mapped[RoomStatusEnum] = mapped_column(default=RoomStatusEnum.AVAILABLE, nullable=False)
     category_id: Mapped[int] = mapped_column(ForeignKey("room_categories.id"), nullable=False)
+    image1: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    image2: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    image3: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
     category: Mapped["RoomCategory"] = relationship(back_populates="rooms")
     bookings: Mapped[List["Booking"]] = relationship(back_populates="room", cascade="all, delete-orphan")
 
@@ -143,6 +149,7 @@ async def lifespan(app: FastAPI):
             db.add(User(username="admin", password="admin", role=UserRoleEnum.ADMIN))
             db.add(User(username="staff", password="123", role=UserRoleEnum.RECEPTIONIST))
             db.add(User(username="janitor", password="123", role=UserRoleEnum.JANITOR))
+            db.add(User(username="guest", password="123", role=UserRoleEnum.GUEST))
             
             cat_std = RoomCategory(name="STANDARD", price_first_hour=60000, price_next_hour=20000, price_overnight=150000, price_daily=250000)
             cat_vip = RoomCategory(name="VIP", price_first_hour=100000, price_next_hour=40000, price_overnight=250000, price_daily=450000)
@@ -317,6 +324,11 @@ def check_janitor_role(x_role: str = Header(None)):
         raise HTTPException(status_code=403, detail="Chỉ lao công mới được thực hiện hành động này")
     return x_role
 
+def check_not_guest(x_role: str = Header(None)):
+    if x_role == UserRoleEnum.GUEST:
+        raise HTTPException(status_code=403, detail="Khách hàng không có quyền thực hiện hành động này")
+    return x_role
+
 # ==========================================
 # 5. ROUTES
 # ==========================================
@@ -474,6 +486,34 @@ def create_room(req: RoomCreateRequest, db: Session = Depends(get_db), role: str
     db.commit()
     return {"message": "Thêm phòng thành công"}
 
+@app.post("/api/admin/rooms/{room_id}/upload-images", tags=["Quản lý - Admin"])
+def upload_room_images(
+    room_id: int,
+    image1: Optional[UploadFile] = File(None),
+    image2: Optional[UploadFile] = File(None),
+    db: Session = Depends(get_db),
+    role: str = Depends(check_admin_role)
+):
+    room = db.query(Room).filter(Room.id == room_id).first()
+    if not room: raise HTTPException(status_code=404, detail="Không tìm thấy phòng")
+    
+    upload_dir = os.path.join(FRONTEND_DIR, "uploads")
+    os.makedirs(upload_dir, exist_ok=True)
+    
+    files = [image1, image2]
+    for idx, f in enumerate(files, start=1):
+        if f and f.filename:
+            ext = os.path.splitext(f.filename)[1]
+            unique_filename = f"room_{room_id}_img{idx}_{uuid.uuid4().hex[:8]}{ext}"
+            file_path = os.path.join(upload_dir, unique_filename)
+            with open(file_path, "wb") as buffer:
+                shutil.copyfileobj(f.file, buffer)
+            
+            setattr(room, f"image{idx}", f"uploads/{unique_filename}")
+            
+    db.commit()
+    return {"message": "Tải hình ảnh lên thành công"}
+
 @app.delete("/api/admin/rooms/{room_id}", tags=["Quản lý - Admin"])
 def delete_room(room_id: int, db: Session = Depends(get_db), role: str = Depends(check_admin_role)):
     room = db.query(Room).filter(Room.id == room_id).first()
@@ -495,7 +535,8 @@ def get_rooms(db: Session = Depends(get_db)):
         result.append({
             "id": r.id, "room_number": r.room_number, "status": r.status, "floor": r.floor,
             "category_name": r.category.name, "price_first_hour": r.category.price_first_hour,
-            "active_booking_id": active_booking.id if active_booking else None
+            "active_booking_id": active_booking.id if active_booking else None,
+            "image1": r.image1, "image2": r.image2, "image3": r.image3
         })
     return result
 
@@ -508,7 +549,7 @@ def finish_cleaning(room_id: int, db: Session = Depends(get_db), role: str = Dep
     return {"message": "Phòng đã sẵn sàng đón khách"}
 
 @app.post("/api/bookings/check-in", tags=["Lễ tân - Nghiệp vụ"])
-def check_in_room(req: CheckInRequest, db: Session = Depends(get_db)):
+def check_in_room(req: CheckInRequest, db: Session = Depends(get_db), role: str = Depends(check_not_guest)):
     room = db.query(Room).filter(Room.id == req.room_id).first()
     if not room or room.status != RoomStatusEnum.AVAILABLE:
         raise HTTPException(status_code=400, detail="Phòng không sẵn sàng")
@@ -523,7 +564,7 @@ def check_in_room(req: CheckInRequest, db: Session = Depends(get_db)):
     return {"message": "Nhận phòng thành công", "booking_id": new_booking.id}
 
 @app.post("/api/bookings/{booking_id}/add-service", tags=["Lễ tân - Nghiệp vụ"])
-def add_service_to_booking(booking_id: int, req: AddServiceRequest, db: Session = Depends(get_db)):
+def add_service_to_booking(booking_id: int, req: AddServiceRequest, db: Session = Depends(get_db), role: str = Depends(check_not_guest)):
     booking = db.query(Booking).filter(Booking.id == booking_id, Booking.status == BookingStatusEnum.ACTIVE).first()
     if not booking: raise HTTPException(status_code=404, detail="Hóa đơn không tồn tại")
     service = db.query(Service).filter(Service.id == req.service_id).first()
@@ -541,7 +582,7 @@ def add_service_to_booking(booking_id: int, req: AddServiceRequest, db: Session 
     return {"message": "Thêm dịch vụ và trừ kho thành công"}
 
 @app.post("/api/bookings/{booking_id}/batch-services", tags=["Lễ tân - Nghiệp vụ"])
-def batch_add_services(booking_id: int, req: BatchServicesRequest, db: Session = Depends(get_db)):
+def batch_add_services(booking_id: int, req: BatchServicesRequest, db: Session = Depends(get_db), role: str = Depends(check_not_guest)):
     booking = db.query(Booking).filter(Booking.id == booking_id, Booking.status == BookingStatusEnum.ACTIVE).first()
     if not booking: raise HTTPException(status_code=404, detail="Hóa đơn không tồn tại")
     
@@ -597,7 +638,7 @@ def preview_bill(booking_id: int, db: Session = Depends(get_db)):
     }
 
 @app.post("/api/bookings/{booking_id}/check-out", response_model=CheckoutResponse, tags=["Lễ tân - Nghiệp vụ"])
-def check_out_room(booking_id: int, req: CheckoutRequest, db: Session = Depends(get_db)):
+def check_out_room(booking_id: int, req: CheckoutRequest, db: Session = Depends(get_db), role: str = Depends(check_not_guest)):
     booking = db.query(Booking).filter(Booking.id == booking_id).first()
     if not booking or booking.status == BookingStatusEnum.COMPLETED:
         raise HTTPException(status_code=400, detail="Hóa đơn không hợp lệ")
@@ -661,7 +702,7 @@ def get_current_shift(user_id: int, db: Session = Depends(get_db)):
     }
 
 @app.post("/api/shifts/start/{user_id}", tags=["Ca trực"])
-def start_shift(user_id: int, db: Session = Depends(get_db)):
+def start_shift(user_id: int, db: Session = Depends(get_db), role: str = Depends(check_not_guest)):
     active = db.query(Shift).filter(Shift.user_id == user_id, Shift.status == ShiftStatusEnum.OPEN).first()
     if active: raise HTTPException(status_code=400, detail="Bạn đang có một ca trực chưa kết thúc")
     
@@ -671,7 +712,7 @@ def start_shift(user_id: int, db: Session = Depends(get_db)):
     return {"message": "Bắt đầu ca trực thành công"}
 
 @app.post("/api/shifts/end/{user_id}", tags=["Ca trực"])
-def end_shift(user_id: int, db: Session = Depends(get_db)):
+def end_shift(user_id: int, db: Session = Depends(get_db), role: str = Depends(check_not_guest)):
     shift = db.query(Shift).filter(Shift.user_id == user_id, Shift.status == ShiftStatusEnum.OPEN).first()
     if not shift: raise HTTPException(status_code=400, detail="Không tìm thấy ca trực đang mở")
     

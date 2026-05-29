@@ -46,9 +46,23 @@ export function checkAuth() {
         document.getElementById('main-sidebar').classList.remove('hidden-section');
         document.getElementById('main-content').classList.remove('hidden-section');
         document.getElementById('user-display-name').innerText = currentUser.username;
-        document.getElementById('user-display-role').innerText = currentUser.role === 'ADMIN' ? 'Quản lý' : currentUser.role === 'JANITOR' ? 'Lao công' : 'Lễ tân';
+        
+        let roleLabel = currentUser.role || 'Người dùng';
+        if (currentUser.role === 'ADMIN') roleLabel = 'Quản lý';
+        else if (currentUser.role === 'JANITOR') roleLabel = 'Lao công';
+        else if (currentUser.role === 'RECEPTIONIST') roleLabel = 'Lễ tân';
+        else if (currentUser.role === 'GUEST') roleLabel = 'Khách hàng';
+        
+        document.getElementById('user-display-role').innerText = roleLabel;
+        
         if (currentUser.role === 'ADMIN') {
             document.getElementById('admin-nav').classList.remove('hidden-section');
+        }
+        
+        if (currentUser.role === 'GUEST') {
+            document.getElementById('nav-shift').classList.add('hidden-section');
+        } else {
+            document.getElementById('nav-shift').classList.remove('hidden-section');
         }
     }
 }

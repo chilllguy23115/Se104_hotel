@@ -127,6 +127,7 @@
                         <option value="RECEPTIONIST">Lễ tân</option>
                         <option value="ADMIN">Quản lý</option>
                         <option value="JANITOR">Lao công</option>
+                        <option value="GUEST">Khách hàng</option>
                     </select>
                 </div>
                 <button onclick="handleRegister()"
@@ -157,6 +158,7 @@
                 class="sidebar-item active flex items-center gap-4 p-3 text-sm rounded-lg">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                 <span>Sơ đồ phòng</span>
+            </a>
             <a href="javascript:void(0)" onclick="showSection('shift')" id="nav-shift"
                 class="sidebar-item flex items-center gap-4 p-3 text-sm rounded-lg">
                 <i data-lucide="clock" class="w-5 h-5"></i>
@@ -602,6 +604,75 @@
                     class="win-btn win-btn-primary bg-green-600 hover:bg-green-700 shadow-green-100">Xác nhận thanh
                     toán</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal Xem Phòng -->
+    <div id="view-room-modal"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden border border-gray-200 animate-slide-in">
+            <div class="p-6 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                    <i data-lucide="image" class="w-5 h-5 text-blue-600"></i>
+                    Hình ảnh phòng <span id="view-room-number" class="text-blue-600 font-black"></span>
+                </h3>
+                <button onclick="closeViewRoomModal()" class="p-1 hover:bg-gray-200 rounded-full">
+                    <i data-lucide="x" class="w-5 h-5 text-gray-400"></i>
+                </button>
+            </div>
+            <div class="p-6 flex flex-col items-center justify-center space-y-4">
+                <!-- Large Image Display -->
+                <div class="w-full relative overflow-hidden rounded-xl shadow-md border bg-gray-50">
+                    <img id="view-room-img" class="w-full h-64 object-cover transition-opacity duration-300" src="" alt="Hình ảnh phòng">
+                </div>
+                <!-- Thumbnails container -->
+                <div id="view-room-thumbnails" class="flex gap-3 justify-center w-full mt-2">
+                    <img onclick="switchMainImage(this)" class="w-16 h-12 object-cover rounded-lg border-2 border-blue-600 cursor-pointer hover:opacity-85 transition-all thumbnail-item" src="" alt="Hình 1">
+                    <img onclick="switchMainImage(this)" class="w-16 h-12 object-cover rounded-lg border-2 border-transparent cursor-pointer hover:opacity-85 transition-all thumbnail-item" src="" alt="Hình 2">
+                </div>
+                <div class="w-full bg-blue-50/50 p-4 rounded-xl border border-blue-100/50 text-center">
+                    <p id="view-room-desc" class="text-sm text-gray-700 font-bold"></p>
+                    <p id="view-room-price" class="text-xs text-blue-600 font-extrabold mt-1"></p>
+                </div>
+            </div>
+            <div class="p-6 bg-gray-50 border-t border-gray-200 flex justify-end">
+                <button onclick="closeViewRoomModal()" class="win-btn win-btn-primary bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2.5 rounded-lg shadow-lg shadow-blue-200 transition-all">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Cập nhật hình ảnh phòng (Admin) -->
+    <div id="upload-images-modal"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-200 animate-slide-in">
+            <div class="p-6 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                    <i data-lucide="upload-cloud" class="w-5 h-5 text-indigo-600"></i>
+                    Quản lý ảnh phòng <span id="upload-room-number" class="text-indigo-600 font-bold"></span>
+                </h3>
+                <button onclick="closeUploadModal()" class="p-1 hover:bg-gray-200 rounded-full">
+                    <i data-lucide="x" class="w-5 h-5 text-gray-400"></i>
+                </button>
+            </div>
+            <form id="upload-images-form" onsubmit="handleImagesUpload(event)" class="p-8 space-y-6">
+                <input type="hidden" id="upload-room-id">
+                
+                <div class="space-y-4">
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase">Hình ảnh 1 (Ảnh chính)</label>
+                        <input type="file" id="upload-img-1" accept="image/*" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase">Hình ảnh 2</label>
+                        <input type="file" id="upload-img-2" accept="image/*" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100">
+                    </div>
+                </div>
+                
+                <div class="pt-4 border-t flex justify-end gap-3">
+                    <button type="button" onclick="closeUploadModal()" class="win-btn win-btn-secondary">Hủy</button>
+                    <button type="submit" class="win-btn win-btn-primary bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-100">Cập nhật ảnh</button>
+                </div>
+            </form>
         </div>
     </div>
 

@@ -1,7 +1,18 @@
 import { API_URL } from './modules/config.js';
 import { currentUser, login, logout, checkAuth } from './modules/auth.js';
 import { showSection } from './modules/ui.js';
-import { fetchRooms, openAddRoomModal, confirmAddRoom, deleteRoom, finishCleaning } from './modules/rooms.js';
+import { 
+    fetchRooms, 
+    openAddRoomModal, 
+    confirmAddRoom, 
+    deleteRoom, 
+    finishCleaning, 
+    openViewRoomModal,
+    switchMainImage,
+    openUploadModal,
+    closeUploadModal,
+    handleImagesUpload
+} from './modules/rooms.js';
 import { fetchCategories, openPriceModal, confirmUpdatePrice } from './modules/pricing.js';
 import { fetchServicesConfig, openServiceConfigModal, saveServiceConfig, deleteServiceConfig, openServiceModal, updateQtyInList, addToSelection, removeFromSelection, confirmBatchServices } from './modules/services.js';
 import { fetchInvoices } from './modules/invoices.js';
@@ -14,8 +25,8 @@ import { openCheckIn, confirmCheckIn, openBillModal, confirmCheckOut } from './m
 document.addEventListener('DOMContentLoaded', async () => {
     checkAuth();
     if (currentUser) {
-        // Chỉ tự động bắt đầu ca nếu chưa chốt tiền trong phiên này
-        if (localStorage.getItem('shift_ended') !== 'true') {
+        // Chỉ tự động bắt đầu ca nếu chưa chốt tiền trong phiên này và không phải khách hàng
+        if (currentUser.role !== 'GUEST' && localStorage.getItem('shift_ended') !== 'true') {
             fetch(`${API_URL}/shifts/start/${currentUser.id}`, { method: 'POST' });
         }
         showSection('rooms', { rooms: fetchRooms });
@@ -50,6 +61,11 @@ window.openAddRoomModal = openAddRoomModal;
 window.confirmAddRoom = confirmAddRoom;
 window.deleteRoom = deleteRoom;
 window.finishCleaning = finishCleaning;
+window.openViewRoomModal = openViewRoomModal;
+window.switchMainImage = switchMainImage;
+window.openUploadModal = openUploadModal;
+window.closeUploadModal = closeUploadModal;
+window.handleImagesUpload = handleImagesUpload;
 
 window.openPriceModal = openPriceModal;
 window.confirmUpdatePrice = confirmUpdatePrice;
@@ -77,3 +93,4 @@ window.closeAddRoomModal = () => document.getElementById('add-room-modal').class
 window.closeBillModal = () => document.getElementById('bill-modal').classList.add('hidden');
 window.closeModal = () => document.getElementById('checkin-modal').classList.add('hidden');
 window.closeServiceModal = () => document.getElementById('service-modal').classList.add('hidden');
+window.closeViewRoomModal = () => document.getElementById('view-room-modal').classList.add('hidden');
