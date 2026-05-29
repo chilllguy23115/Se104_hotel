@@ -6,9 +6,9 @@
 </p>
 
 <h1 align="center"><b>Nhập môn công nghệ phần mềm</b></h1>
-<h2 align="center"><b>Web quản lý nhà nghỉ - khách sạn (Hotel Pro)</b></h2>
+<h2 align="center"><b>Web quản lý nhà nghỉ</b></h2>
 
-## THÀNH VIÊN NHÓM 1
+## THÀNH VIÊN NHÓM 2
 | STT    | MSSV          | Họ và Tên              
 | ------ |:-------------:| ----------------------
 | 1      | 23520070      | Phạm Ngô Quốc Anh      
@@ -23,17 +23,17 @@
 ---
 
 ### Giới thiệu sơ lược dự án
-**Hotel Pro** là một hệ thống quản lý nhà nghỉ hiện đại, được thiết kế với giao diện cao cấp kiểu dáng Fluent Glassmorphism sang trọng, mượt mà và trực quan. Hệ thống hỗ trợ tối ưu hóa quy trình quản lý phòng, theo dõi hóa đơn, dịch vụ tiện ích minibar, và quản lý ca trực của nhân viên một cách chặt chẽ.
+**Hotel Pro** là một hệ thống quản lý nhà nghỉ hiện đại hỗ trợ tối ưu hóa quy trình quản lý phòng, theo dõi hóa đơn, dịch vụ tiện ích minibar, và quản lý ca trực của nhân viên một cách chặt chẽ.
 
 #### Các tính năng nổi bật:
-* **Quản lý sơ đồ phòng trực quan**: Theo dõi thời gian thực trạng thái phòng (Phòng trống - Xanh lá, Có khách - Đỏ, Đang dọn dẹp - Vàng).
-* **Phân quyền người dùng chặt chẽ (Multi-role Authorization)**:
+* **Quản lý sơ đồ phòng trực quan**: Theo dõi thời gian thực trạng thái phòng (Phòng trống, Có khách, Đang dọn dẹp).
+* **Phân quyền người dùng chặt chẽ**:
   * **Admin**: Quyền quản lý tối cao. Cấu hình danh mục phòng, định giá linh hoạt (theo giờ đầu, giờ tiếp theo, qua đêm, ngày), quản lý minibar, tài khoản nhân viên, xem báo cáo doanh thu và **tải ảnh phòng trực tiếp từ trình duyệt** (hỗ trợ tối đa 2 hình ảnh cho mỗi phòng).
-  * **Lễ tân (Receptionist)**: Thực hiện nhận phòng (Check-in), trả phòng (Check-out) tự động tính hóa đơn, thêm dịch vụ minibar và quản lý giao ca trực (đối chiếu tiền mặt/chuyển khoản).
-  * **Nhân viên dọn phòng (Janitor)**: Theo dõi danh sách phòng cần dọn dẹp và cập nhật trạng thái phòng sạch sẽ.
-  * **Khách hàng (Guest)**: Chỉ xem sơ đồ phòng và khám phá **Album hình ảnh phòng tương tác** (mỗi phòng gồm 2 góc ảnh sắc nét dạng Gallery có thumbnails chuyển đổi mượt mà).
+  * **Lễ tân**: Thực hiện nhận phòng, trả phòng tự động tính hóa đơn, thêm dịch vụ minibar và quản lý giao ca trực (đối chiếu tiền mặt/chuyển khoản).
+  * **Nhân viên dọn phòng**: Theo dõi danh sách phòng cần dọn dẹp và cập nhật trạng thái phòng sạch sẽ.
+  * **Khách hàng**: Có thể xem trước hình ảnh của phòng.
 * **Công nghệ phát triển**:
-  * **Backend**: FastAPI (Python), SQLAlchemy ORM, SQLite Database tự sinh dữ liệu mẫu ban đầu.
+  * **Backend**: FastAPI (Python), SQLAlchemy ORM, SQLite Database.
   * **Frontend**: HTML5, Vanilla CSS3 (TailwindCSS JIT), Vanilla Javascript hiện đại dạng ES Modules.
 
 ---
