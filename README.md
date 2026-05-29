@@ -1,0 +1,73 @@
+<!-- Banner -->
+<p align="center">
+  <a href="https://www.uit.edu.vn/" title="Trường Đại học Công nghệ Thông tin" style="border: none;">
+    <img src="https://i.imgur.com/WmMnSRt.png" alt="Trường Đại học Công nghệ Thông tin | University of Information Technology">
+  </a>
+</p>
+
+<h1 align="center"><b>Nhập môn công nghệ phần mềm</b></h1>
+<h2 align="center"><b>Web quản lý nhà nghỉ - khách sạn (Hotel Pro)</b></h2>
+
+## THÀNH VIÊN NHÓM 1
+| STT    | MSSV          | Họ và Tên              
+| ------ |:-------------:| ----------------------
+| 1      | 23520070      | Phạm Ngô Quốc Anh      
+| 2      | 24521512      | Tăng Nguyễn Bảo Quỳnh  
+
+## GIỚI THIỆU MÔN HỌC
+* **Tên môn học:** Nhập môn công nghệ phần mềm
+* **Mã môn học:** SE104.Q29
+* **Năm học:** HK2 (2025 - 2026)
+* **Giảng viên**: T.S Đỗ Văn Tiến
+
+---
+
+### Giới thiệu sơ lược dự án
+**Hotel Pro** là một hệ thống quản lý nhà nghỉ - khách sạn hiện đại, được thiết kế với giao diện cao cấp kiểu dáng Fluent Glassmorphism sang trọng, mượt mà và trực quan. Hệ thống hỗ trợ tối ưu hóa quy trình quản lý phòng, theo dõi hóa đơn, dịch vụ tiện ích minibar, và quản lý ca trực của nhân viên một cách chặt chẽ.
+
+#### Các tính năng nổi bật:
+* **Quản lý sơ đồ phòng trực quan**: Theo dõi thời gian thực trạng thái phòng (Phòng trống - Xanh lá, Có khách - Đỏ, Đang dọn dẹp - Vàng).
+* **Phân quyền người dùng chặt chẽ (Multi-role Authorization)**:
+  * **Admin**: Quyền quản lý tối cao. Cấu hình danh mục phòng, định giá linh hoạt (theo giờ đầu, giờ tiếp theo, qua đêm, ngày), quản lý minibar, tài khoản nhân viên, xem báo cáo doanh thu và **tải ảnh phòng trực tiếp từ trình duyệt** (hỗ trợ tối đa 2 hình ảnh cho mỗi phòng).
+  * **Lễ tân (Receptionist)**: Thực hiện nhận phòng (Check-in), trả phòng (Check-out) tự động tính hóa đơn, thêm dịch vụ minibar và quản lý giao ca trực (đối chiếu tiền mặt/chuyển khoản).
+  * **Nhân viên dọn phòng (Janitor)**: Theo dõi danh sách phòng cần dọn dẹp và cập nhật trạng thái phòng sạch sẽ.
+  * **Khách hàng (Guest)**: Chỉ xem sơ đồ phòng và khám phá **Album hình ảnh phòng tương tác** (mỗi phòng gồm 2 góc ảnh sắc nét dạng Gallery có thumbnails chuyển đổi mượt mà).
+* **Công nghệ phát triển**:
+  * **Backend**: FastAPI (Python), SQLAlchemy ORM, SQLite Database tự sinh dữ liệu mẫu ban đầu.
+  * **Frontend**: HTML5, Vanilla CSS3 (TailwindCSS JIT), Vanilla Javascript hiện đại dạng ES Modules.
+
+---
+
+### HƯỚNG DẪN CHẠY DEMO
+
+#### 1. Yêu cầu hệ thống
+Hãy đảm bảo máy tính của bạn đã cài đặt **Python (phiên bản 3.8 trở lên)**.
+
+#### 2. Cài đặt thư viện
+Mở terminal tại thư mục gốc của dự án và chạy lệnh sau để cài đặt các thư viện cần thiết:
+```bash
+pip install -r requirements.txt
+```
+
+#### 3. Khởi chạy Backend Server
+Chạy lệnh khởi động máy chủ FastAPI/Uvicorn:
+```bash
+python backend/main.py
+```
+Máy chủ sẽ được khởi động tại địa chỉ: `http://127.0.0.1:8000`
+
+#### 4. Trải nghiệm Ứng dụng
+Hệ thống Frontend đã được tích hợp và mount tự động trong máy chủ FastAPI. Bạn chỉ cần mở trình duyệt web bất kỳ và truy cập vào đường dẫn:
+```text
+http://127.0.0.1:8000
+```
+
+#### 5. Danh sách tài khoản thử nghiệm
+Hệ thống tự động khởi tạo cơ sở dữ liệu mẫu nếu chưa tồn tại. Bạn có thể sử dụng các tài khoản sau để thử nghiệm các vai trò:
+
+| Vai trò | Tài khoản | Mật khẩu | Các chức năng chính |
+| :--- | :--- | :--- | :--- |
+| **Quản trị (Admin)** | `admin` | `admin` | Quản lý giá phòng, dịch vụ, nhân viên, tải ảnh phòng trực tiếp từ trình duyệt |
+| **Lễ tân** | `staff` | `123` | Nhận/trả phòng, thêm dịch vụ minibar, bàn giao ca trực |
+| **Dọn phòng** | `janitor` | `123` | Nhận phòng cần dọn dẹp, hoàn tất dọn dẹp phòng |
+| **Khách hàng** | `guest` | `123` | Xem sơ đồ phòng, xem album 2 ảnh tương tác (chỉ đọc) |
