@@ -23,7 +23,7 @@
 ---
 
 ### Giới thiệu sơ lược dự án
-**Hotel Pro** là một hệ thống quản lý nhà nghỉ - khách sạn hiện đại, được thiết kế với giao diện cao cấp kiểu dáng Fluent Glassmorphism sang trọng, mượt mà và trực quan. Hệ thống hỗ trợ tối ưu hóa quy trình quản lý phòng, theo dõi hóa đơn, dịch vụ tiện ích minibar, và quản lý ca trực của nhân viên một cách chặt chẽ.
+**Hotel Pro** là một hệ thống quản lý nhà nghỉ hiện đại, được thiết kế với giao diện cao cấp kiểu dáng Fluent Glassmorphism sang trọng, mượt mà và trực quan. Hệ thống hỗ trợ tối ưu hóa quy trình quản lý phòng, theo dõi hóa đơn, dịch vụ tiện ích minibar, và quản lý ca trực của nhân viên một cách chặt chẽ.
 
 #### Các tính năng nổi bật:
 * **Quản lý sơ đồ phòng trực quan**: Theo dõi thời gian thực trạng thái phòng (Phòng trống - Xanh lá, Có khách - Đỏ, Đang dọn dẹp - Vàng).
