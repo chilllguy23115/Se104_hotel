@@ -61,8 +61,16 @@ export function checkAuth() {
         
         if (currentUser.role === 'GUEST') {
             document.getElementById('nav-shift').classList.add('hidden-section');
+            document.getElementById('nav-guest-chat').classList.remove('hidden-section');
+            document.getElementById('nav-receptionist-chat').classList.add('hidden-section');
         } else {
             document.getElementById('nav-shift').classList.remove('hidden-section');
+            document.getElementById('nav-guest-chat').classList.add('hidden-section');
+            if (currentUser.role === 'RECEPTIONIST' || currentUser.role === 'ADMIN') {
+                document.getElementById('nav-receptionist-chat').classList.remove('hidden-section');
+            } else {
+                document.getElementById('nav-receptionist-chat').classList.add('hidden-section');
+            }
         }
     }
 }

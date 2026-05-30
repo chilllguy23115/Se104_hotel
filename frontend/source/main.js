@@ -20,6 +20,14 @@ import { fetchStaff, handleRegister } from './modules/staff.js';
 import { fetchRevenue } from './modules/reports.js';
 import { fetchCurrentShift, startShift, endShift, fetchShiftHistory } from './modules/shifts.js';
 import { openCheckIn, confirmCheckIn, openBillModal, confirmCheckOut } from './modules/bookings.js';
+import { 
+    submitHomepageFeedback, 
+    loadGuestChat, 
+    sendGuestChatMessage, 
+    loadReceptionistThreads, 
+    selectChatThread, 
+    sendReceptionistReply 
+} from './modules/chat.js';
 
 // Khởi tạo ứng dụng
 document.addEventListener('DOMContentLoaded', async () => {
@@ -43,7 +51,9 @@ const sectionCallbacks = {
     'staff': fetchStaff,
     'reports': fetchRevenue,
     'shift': fetchCurrentShift,
-    'shift-history': fetchShiftHistory
+    'shift-history': fetchShiftHistory,
+    'guest-chat': loadGuestChat,
+    'receptionist-chat': loadReceptionistThreads
 };
 
 // Phơi bày hàm ra window để HTML có thể gọi (onclick)
@@ -104,3 +114,11 @@ window.openAuthModal = (type = 'login') => {
 window.closeAuthModal = () => {
     document.getElementById('auth-modal-backdrop').classList.add('hidden');
 };
+
+// Chat exposure
+window.submitHomepageFeedback = submitHomepageFeedback;
+window.loadGuestChat = loadGuestChat;
+window.sendGuestChatMessage = sendGuestChatMessage;
+window.loadReceptionistThreads = loadReceptionistThreads;
+window.selectChatThread = selectChatThread;
+window.sendReceptionistReply = sendReceptionistReply;

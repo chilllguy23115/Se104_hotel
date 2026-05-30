@@ -5,6 +5,7 @@ export function getHeaders() {
     const headers = { 'Content-Type': 'application/json' };
     if (user && user.role) {
         headers['X-Role'] = user.role;
+        headers['X-Username'] = user.username || '';
     }
     return headers;
 }

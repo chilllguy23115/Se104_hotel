@@ -149,6 +149,16 @@ class Feedback(Base):
     message: Mapped[str] = mapped_column(String(500), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
+class ChatMessage(Base):
+    __tablename__ = "chat_messages"
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    sender_role: Mapped[str] = mapped_column(String(20), nullable=False) # 'GUEST' or 'RECEPTIONIST'
+    guest_username: Mapped[str] = mapped_column(String(50), nullable=False)
+    guest_name: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    phone_number: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
+    message: Mapped[str] = mapped_column(String(500), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
 # ==========================================
 # 3. INITIALIZATION & LIFESPAN
 # ==========================================
@@ -332,6 +342,14 @@ class FeedbackCreate(BaseModel):
         if not v or not re.match(r'^\+?[\d\s-]{9,15}$', v):
             raise ValueError('Số điện thoại không hợp lệ (phải gồm 9-15 chữ số)')
         return v
+
+class ChatMessageCreate(BaseModel):
+    message: str
+    guest_name: Optional[str] = None
+    phone_number: Optional[str] = None
+
+class ChatReplyCreate(BaseModel):
+    message: str
 
 def get_db():
     db = SessionLocal()
@@ -795,6 +813,111 @@ def list_feedbacks(db: Session = Depends(get_db), role: str = Depends(check_rece
         "message": f.message,
         "created_at": f.created_at
     } for f in feedbacks]
+
+@app.post("/api/chat", tags=["Hỗ trợ & Chat"])
+def guest_send_message(
+    req: ChatMessageCreate, 
+    db: Session = Depends(get_db), 
+    role: str = Depends(check_guest_role),
+    x_username: str = Header(None)
+):
+    if not x_username:
+        raise HTTPException(status_code=401, detail="Vui lòng đăng nhập để gửi tin nhắn")
+    new_msg = ChatMessage(
+        sender_role="GUEST",
+        guest_username=x_username,
+        guest_name=req.guest_name or x_username,
+        phone_number=req.phone_number,
+        message=req.message
+    )
+    db.add(new_msg)
+    db.commit()
+    return {"message": "Tin nhắn đã được gửi tới lễ tân!"}
+
+@app.get("/api/chat/my", tags=["Hỗ trợ & Chat"])
+def guest_get_messages(
+    db: Session = Depends(get_db), 
+    role: str = Depends(check_guest_role),
+    x_username: str = Header(None)
+):
+    if not x_username:
+        raise HTTPException(status_code=401, detail="Vui lòng đăng nhập để xem tin nhắn")
+    messages = db.query(ChatMessage).filter(ChatMessage.guest_username == x_username).order_by(ChatMessage.created_at.asc()).all()
+    return [{
+        "id": m.id,
+        "sender_role": m.sender_role,
+        "guest_username": m.guest_username,
+        "guest_name": m.guest_name,
+        "phone_number": m.phone_number,
+        "message": m.message,
+        "created_at": m.created_at
+    } for m in messages]
+
+@app.get("/api/chat/threads", tags=["Hỗ trợ & Chat"])
+def list_chat_threads(
+    db: Session = Depends(get_db), 
+    role: str = Depends(check_receptionist_or_admin)
+):
+    subquery = db.query(
+        ChatMessage.guest_username,
+        func.max(ChatMessage.id).label("max_id")
+    ).group_by(ChatMessage.guest_username).subquery()
+    
+    threads = db.query(ChatMessage).join(
+        subquery,
+        ChatMessage.id == subquery.c.max_id
+    ).order_by(ChatMessage.created_at.desc()).all()
+    
+    return [{
+        "guest_username": t.guest_username,
+        "guest_name": t.guest_name,
+        "phone_number": t.phone_number,
+        "latest_message": t.message,
+        "created_at": t.created_at
+    } for t in threads]
+
+@app.get("/api/chat/thread/{guest_username}", tags=["Hỗ trợ & Chat"])
+def get_chat_thread(
+    guest_username: str,
+    db: Session = Depends(get_db), 
+    role: str = Depends(check_receptionist_or_admin)
+):
+    messages = db.query(ChatMessage).filter(ChatMessage.guest_username == guest_username).order_by(ChatMessage.created_at.asc()).all()
+    return [{
+        "id": m.id,
+        "sender_role": m.sender_role,
+        "guest_username": m.guest_username,
+        "guest_name": m.guest_name,
+        "phone_number": m.phone_number,
+        "message": m.message,
+        "created_at": m.created_at
+    } for m in messages]
+
+@app.post("/api/chat/reply/{guest_username}", tags=["Hỗ trợ & Chat"])
+def reply_to_guest(
+    guest_username: str,
+    req: ChatReplyCreate,
+    db: Session = Depends(get_db), 
+    role: str = Depends(check_receptionist_or_admin)
+):
+    last_guest_msg = db.query(ChatMessage).filter(
+        ChatMessage.guest_username == guest_username,
+        ChatMessage.sender_role == "GUEST"
+    ).order_by(ChatMessage.id.desc()).first()
+    
+    name = last_guest_msg.guest_name if last_guest_msg else "Khách hàng"
+    phone = last_guest_msg.phone_number if last_guest_msg else ""
+    
+    new_reply = ChatMessage(
+        sender_role="RECEPTIONIST",
+        guest_username=guest_username,
+        guest_name=name,
+        phone_number=phone,
+        message=req.message
+    )
+    db.add(new_reply)
+    db.commit()
+    return {"message": "Đã gửi phản hồi thành công!"}
 
 # Mount static files for frontend
 FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
