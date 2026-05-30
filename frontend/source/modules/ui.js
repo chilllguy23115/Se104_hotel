@@ -1,5 +1,5 @@
 export function showSection(sectionId, callbacks = {}) {
-    ['rooms', 'prices', 'services-config', 'invoices', 'staff', 'reports', 'shift', 'shift-history'].forEach(s => {
+    ['rooms', 'prices', 'services-config', 'invoices', 'staff', 'reports', 'shift', 'shift-history', 'guest-chat', 'receptionist-chat'].forEach(s => {
         const el = document.getElementById(`section-${s}`);
         const nav = document.getElementById(`nav-${s}`);
         if (el) el.classList.add('hidden-section');
