@@ -32,5 +32,8 @@ export async function handleRegister() {
             const err = await res.json();
             alert(err.detail || "Đã có lỗi xảy ra!"); 
         }
-    } catch (e) { console.error(e); }
+    } catch (e) {
+        console.error(e);
+        alert("Lỗi kết nối đến server!");
+    }
 }
