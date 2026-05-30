@@ -218,6 +218,7 @@ class CheckInRequest(BaseModel):
     guest_id_number: str
     guest_dob: str
     rental_type: RentalTypeEnum
+    check_in_time: Optional[datetime] = None
 
     @field_validator('guest_name')
     @classmethod
@@ -607,10 +608,20 @@ def check_in_room(req: CheckInRequest, db: Session = Depends(get_db), role: str 
     room = db.query(Room).filter(Room.id == req.room_id).first()
     if not room or room.status != RoomStatusEnum.AVAILABLE:
         raise HTTPException(status_code=400, detail="Phòng không sẵn sàng")
+    
+    booking_time = datetime.now()
+    if req.check_in_time:
+        in_time = req.check_in_time
+        if in_time.tzinfo is not None:
+            in_time = in_time.replace(tzinfo=None)
+        if in_time < (datetime.now() - timedelta(minutes=1)):
+            raise HTTPException(status_code=400, detail="Thời gian nhận phòng không được trước thời gian hiện tại")
+        booking_time = in_time
+
     new_booking = Booking(
         room_id=req.room_id, user_id=req.user_id, guest_name=req.guest_name,
         guest_id_number=req.guest_id_number, guest_dob=req.guest_dob,
-        rental_type=req.rental_type, status=BookingStatusEnum.ACTIVE
+        rental_type=req.rental_type, check_in_time=booking_time, status=BookingStatusEnum.ACTIVE
     )
     room.status = RoomStatusEnum.OCCUPIED
     db.add(new_booking)

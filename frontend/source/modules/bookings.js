@@ -8,17 +8,39 @@ let currentBookingId = null;
 export function openCheckIn(id, num) { 
     currentRoomId = id; 
     document.getElementById('modal-room-number').innerText = num; 
+
+    // Set default and min check-in time to local time
+    const checkinTimeInput = document.getElementById('checkin-time');
+    if (checkinTimeInput) {
+        const now = new Date();
+        const tzOffset = now.getTimezoneOffset() * 60000;
+        const localISOTime = (new Date(now - tzOffset)).toISOString().slice(0, 16);
+        checkinTimeInput.value = localISOTime;
+        checkinTimeInput.min = localISOTime;
+    }
+
     document.getElementById('checkin-modal').classList.remove('hidden'); 
 }
 
 export async function confirmCheckIn() {
+    const checkinTimeVal = document.getElementById('checkin-time').value;
+    if (checkinTimeVal) {
+        const selectedTime = new Date(checkinTimeVal);
+        const now = new Date();
+        if (selectedTime < new Date(now.getTime() - 60000)) {
+            alert("Thời gian nhận phòng không được trước thời gian hiện tại!");
+            return;
+        }
+    }
+
     const payload = { 
         room_id: currentRoomId, 
         user_id: currentUser.id, 
         guest_name: document.getElementById('guest-name').value, 
         guest_id_number: document.getElementById('guest-id').value, 
         guest_dob: document.getElementById('guest-dob').value, 
-        rental_type: document.getElementById('rental-type').value 
+        rental_type: document.getElementById('rental-type').value,
+        check_in_time: checkinTimeVal ? new Date(checkinTimeVal).toISOString() : null
     };
     const res = await fetch(`${API_URL}/bookings/check-in`, { 
         method: 'POST', 
@@ -30,7 +52,11 @@ export async function confirmCheckIn() {
         fetchRooms(); 
     } else { 
         const err = await res.json(); 
-        alert(err.detail.map(d => d.msg).join("\n")); 
+        if (Array.isArray(err.detail)) {
+            alert(err.detail.map(d => d.msg).join("\n")); 
+        } else {
+            alert(err.detail || "Đã xảy ra lỗi khi nhận phòng!");
+        }
     }
 }
 
