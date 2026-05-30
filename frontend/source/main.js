@@ -94,3 +94,32 @@ window.closeBillModal = () => document.getElementById('bill-modal').classList.ad
 window.closeModal = () => document.getElementById('checkin-modal').classList.add('hidden');
 window.closeServiceModal = () => document.getElementById('service-modal').classList.add('hidden');
 window.closeViewRoomModal = () => document.getElementById('view-room-modal').classList.add('hidden');
+
+// Landing page functions
+window.showAuthScreen = (type) => {
+    const landingPage = document.getElementById('landing-page');
+    const authScreen = document.getElementById('auth-screen');
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+    
+    landingPage.classList.add('hidden-section');
+    authScreen.classList.remove('hidden-section');
+    
+    if (type === 'register') {
+        loginForm.classList.add('hidden-section');
+        registerForm.classList.remove('hidden-section');
+    } else {
+        loginForm.classList.remove('hidden-section');
+        registerForm.classList.add('hidden-section');
+    }
+    
+    lucide.createIcons();
+};
+
+window.goToLandingPage = () => {
+    const landingPage = document.getElementById('landing-page');
+    const authScreen = document.getElementById('auth-screen');
+    landingPage.classList.remove('hidden-section');
+    authScreen.classList.add('hidden-section');
+    lucide.createIcons();
+};

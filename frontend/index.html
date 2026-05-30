@@ -11,6 +11,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <style>
+        #landing-page {
+            position: fixed;
+            inset: 0;
+            z-index: 9998;
+            background: linear-gradient(135deg, #1a365d 0%, #2d5a8c 50%, #1e3a5f 100%);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        #landing-page.hidden-section {
+            display: none !important;
+        }
+
         #auth-screen {
             position: fixed;
             inset: 0;
@@ -56,12 +70,404 @@
         .hidden-section {
             display: none !important;
         }
+
+        .landing-hero {
+            background: linear-gradient(135deg, rgba(26, 54, 93, 0.9) 0%, rgba(45, 90, 140, 0.8) 50%);
+            padding: 60px 40px;
+            text-align: center;
+            color: white;
+        }
+
+        .landing-feature {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 32px 24px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .landing-feature:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-4px);
+        }
+
+        .landing-feature-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+
+        .landing-section {
+            padding: 80px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .landing-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        }
     </style>
 </head>
 
 <body class="flex h-screen overflow-hidden bg-[#f3f3f3]">
 
-    <!-- Auth Screen (Login & Register) -->
+    <!-- Landing Page -->
+    <div id="landing-page">
+        <!-- Navigation Header -->
+        <header class="sticky top-0 z-50 backdrop-filter backdrop-blur-md bg-gradient-to-r from-blue-900/40 to-blue-800/40 border-b border-white/10 px-8 py-4">
+            <div class="max-w-6xl mx-auto flex items-center justify-between">
+                <div class="flex items-center gap-3 text-white">
+                    <div class="p-2.5 bg-white/15 rounded-lg backdrop-filter backdrop-blur">
+                        <svg data-lucide="hotel" class="w-6 h-6 text-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2Z"/><path d="M9 7h1v10H9V7M14 7h1v10h-1V7M9 17h6v2H9v-2"/></svg>
+                    </div>
+                    <h1 class="text-2xl font-bold tracking-tight">Hotel Pro</h1>
+                </div>
+                <button onclick="showAuthScreen('login')" class="px-6 py-2.5 bg-white/20 hover:bg-white/30 text-white rounded-lg font-medium transition-all backdrop-filter backdrop-blur border border-white/20">Đăng nhập</button>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="landing-hero relative overflow-hidden">
+            <div class="absolute inset-0 opacity-10">
+                <div class="absolute top-20 right-20 w-72 h-72 bg-white rounded-full blur-3xl"></div>
+                <div class="absolute bottom-10 left-10 w-96 h-96 bg-blue-300 rounded-full blur-3xl"></div>
+            </div>
+            
+            <div class="relative max-w-4xl mx-auto">
+                <div class="inline-block px-4 py-2 bg-white/20 rounded-full border border-white/30 backdrop-filter backdrop-blur text-white text-sm font-medium mb-6">
+                    ✨ Giải pháp quản lý nhà nghỉ hiện đại
+                </div>
+                
+                <h2 class="text-5xl md:text-6xl font-black mb-6 leading-tight">
+                    Quản Lý Nhà Nghỉ<br/>Thông Minh & Hiệu Quả
+                </h2>
+                
+                <p class="text-xl text-blue-100 mb-10 max-w-2xl mx-auto leading-relaxed">
+                    Hotel Pro cung cấp giải pháp quản lý toàn diện cho các nhà nghỉ, từ quản lý phòng, hóa đơn, dịch vụ minibar đến theo dõi doanh thu một cách chặt chẽ và chuyên nghiệp.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="showAuthScreen('login')" class="px-8 py-4 bg-white text-blue-900 rounded-lg font-bold hover:shadow-2xl hover:shadow-white/20 transition-all transform hover:scale-105">
+                        Bắt Đầu Ngay
+                    </button>
+                    <button onclick="document.getElementById('features').scrollIntoView({behavior: 'smooth'})" class="px-8 py-4 bg-white/20 hover:bg-white/30 text-white rounded-lg font-bold border border-white/40 transition-all backdrop-filter backdrop-blur">
+                        Tìm Hiểu Thêm
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <div class="landing-divider"></div>
+
+        <!-- Features Section -->
+        <section id="features" class="landing-section">
+            <h3 class="text-4xl font-black text-white text-center mb-4">Tính Năng Nổi Bật</h3>
+            <p class="text-blue-100 text-center mb-16 text-lg max-w-2xl mx-auto">Những công cụ mạnh mẽ được thiết kế để tối ưu hóa quy trình kinh doanh của bạn</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="landing-feature">
+                    <div class="landing-feature-icon">
+                        <svg data-lucide="layout-grid" class="w-7 h-7 text-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    </div>
+                    <h4 class="text-xl font-bold text-white mb-3">Sơ Đồ Phòng Trực Quan</h4>
+                    <p class="text-blue-100">Theo dõi thời gian thực trạng thái phòng (Trống, Có khách, Đang dọn) với giao diện trực quan và dễ sử dụng.</p>
+                </div>
+
+                <div class="landing-feature">
+                    <div class="landing-feature-icon">
+                        <svg data-lucide="key" class="w-7 h-7 text-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-9 4m0 0L5 2m16 0v19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V2m16 0H5"/></svg>
+                    </div>
+                    <h4 class="text-xl font-bold text-white mb-3">Quản Lý Người Dùng Phân Quyền</h4>
+                    <p class="text-blue-100">Hệ thống phân quyền chi tiết cho Admin, Lễ tân, Nhân viên dọn phòng và Khách hàng với các quyền hạn cụ thể.</p>
+                </div>
+
+                <div class="landing-feature">
+                    <div class="landing-feature-icon">
+                        <svg data-lucide="credit-card" class="w-7 h-7 text-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="15" rx="3" ry="3"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    </div>
+                    <h4 class="text-xl font-bold text-white mb-3">Quản Lý Hóa Đơn & Thanh Toán</h4>
+                    <p class="text-blue-100">Tính toán tự động hóa đơn, quản lý dịch vụ minibar, và theo dõi giao ca trực với đối chiếu tiền mặt/chuyển khoản.</p>
+                </div>
+
+                <div class="landing-feature">
+                    <div class="landing-feature-icon">
+                        <svg data-lucide="tag" class="w-7 h-7 text-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2H2v10c0 1.1.9 2 2 2h10m0 0l8-8m-8 8v6m0-6h6"/></svg>
+                    </div>
+                    <h4 class="text-xl font-bold text-white mb-3">Định Giá Linh Hoạt</h4>
+                    <p class="text-blue-100">Cấu hình giá phòng theo múi giờ: Giờ đầu, Giờ tiếp, Qua đêm, Ngày với tính linh hoạt cao.</p>
+                </div>
+
+                <div class="landing-feature">
+                    <div class="landing-feature-icon">
+                        <svg data-lucide="image" class="w-7 h-7 text-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    </div>
+                    <h4 class="text-xl font-bold text-white mb-3">Tải Hình Ảnh Phòng</h4>
+                    <p class="text-blue-100">Tải trực tiếp hình ảnh phòng từ trình duyệt, hỗ trợ tối đa 2 hình ảnh cho mỗi phòng để khách hàng xem trước.</p>
+                </div>
+
+                <div class="landing-feature">
+                    <div class="landing-feature-icon">
+                        <svg data-lucide="bar-chart-3" class="w-7 h-7 text-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="8"/><rect x="14" y="4" width="3" height="14"/></svg>
+                    </div>
+                    <h4 class="text-xl font-bold text-white mb-3">Báo Cáo Doanh Thu</h4>
+                    <p class="text-blue-100">Xem báo cáo chi tiết về doanh thu từ phòng, dịch vụ, và các nguồn thu khác một cách rõ ràng và dễ hiểu.</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="landing-divider"></div>
+
+        <!-- Roles Section -->
+        <section class="landing-section">
+            <h3 class="text-4xl font-black text-white text-center mb-4">Các Vai Trò Người Dùng</h3>
+            <p class="text-blue-100 text-center mb-16 text-lg max-w-2xl mx-auto">Mỗi vai trò được tối ưu hóa cho các quyền hạn và trách nhiệm cụ thể</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white/10 backdrop-filter backdrop-blur border border-white/20 rounded-xl p-8 hover:bg-white/20 transition-all">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center">
+                            <svg data-lucide="shield-admin" class="w-6 h-6 text-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 5.58 2 10c0 5.25 3.07 9.79 7.5 11.43V22h5v-0.57C18.93 19.79 22 15.25 22 10c0-4.42-4.48-8-10-8z"/><path d="M12 6v6m-2 2h4m-2-8v0m0 16v0"/></svg>
+                        </div>
+                        <h4 class="text-2xl font-bold text-white">Quản Trị (Admin)</h4>
+                    </div>
+                    <ul class="space-y-2 text-blue-100">
+                        <li class="flex items-start gap-2">
+                            <span class="text-blue-300 mt-1">✓</span>
+                            <span>Quản lý toàn bộ hệ thống và cấu hình</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-blue-300 mt-1">✓</span>
+                            <span>Cấu hình giá phòng linh hoạt</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-blue-300 mt-1">✓</span>
+                            <span>Quản lý dịch vụ minibar</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-blue-300 mt-1">✓</span>
+                            <span>Quản lý tài khoản nhân viên</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-blue-300 mt-1">✓</span>
+                            <span>Xem báo cáo doanh thu chi tiết</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-blue-300 mt-1">✓</span>
+                            <span>Tải ảnh phòng trực tiếp</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="bg-white/10 backdrop-filter backdrop-blur border border-white/20 rounded-xl p-8 hover:bg-white/20 transition-all">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center">
+                            <svg data-lucide="users" class="w-6 h-6 text-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        </div>
+                        <h4 class="text-2xl font-bold text-white">Lễ Tân</h4>
+                    </div>
+                    <ul class="space-y-2 text-blue-100">
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-300 mt-1">✓</span>
+                            <span>Nhận phòng cho khách</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-300 mt-1">✓</span>
+                            <span>Trả phòng và tính hóa đơn tự động</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-300 mt-1">✓</span>
+                            <span>Quản lý dịch vụ minibar</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-300 mt-1">✓</span>
+                            <span>Giao ca trực</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-300 mt-1">✓</span>
+                            <span>Đối chiếu tiền mặt/chuyển khoản</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="bg-white/10 backdrop-filter backdrop-blur border border-white/20 rounded-xl p-8 hover:bg-white/20 transition-all">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-600 rounded-lg flex items-center justify-center">
+                            <svg data-lucide="wrench" class="w-6 h-6 text-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 1 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                        </div>
+                        <h4 class="text-2xl font-bold text-white">Nhân Viên Dọn Phòng</h4>
+                    </div>
+                    <ul class="space-y-2 text-blue-100">
+                        <li class="flex items-start gap-2">
+                            <span class="text-orange-300 mt-1">✓</span>
+                            <span>Xem danh sách phòng cần dọn dẹp</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-orange-300 mt-1">✓</span>
+                            <span>Cập nhật trạng thái phòng</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-orange-300 mt-1">✓</span>
+                            <span>Đánh dấu phòng sạch sẽ</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="bg-white/10 backdrop-filter backdrop-blur border border-white/20 rounded-xl p-8 hover:bg-white/20 transition-all">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-lg flex items-center justify-center">
+                            <svg data-lucide="user" class="w-6 h-6 text-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        </div>
+                        <h4 class="text-2xl font-bold text-white">Khách Hàng</h4>
+                    </div>
+                    <ul class="space-y-2 text-blue-100">
+                        <li class="flex items-start gap-2">
+                            <span class="text-purple-300 mt-1">✓</span>
+                            <span>Xem trước hình ảnh phòng</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-purple-300 mt-1">✓</span>
+                            <span>Lựa chọn phòng yêu thích</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-purple-300 mt-1">✓</span>
+                            <span>Xem thông tin phòng chi tiết</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <div class="landing-divider"></div>
+
+        <!-- Contact Section -->
+        <section id="contact" class="landing-section">
+            <div class="max-w-3xl mx-auto">
+                <h3 class="text-4xl font-black text-white text-center mb-4">Liên Hệ Chúng Tôi</h3>
+                <p class="text-blue-100 text-center mb-12 text-lg">Có câu hỏi hoặc cần hỗ trợ? Chúng tôi sẵn sàng giúp đỡ</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                    <div class="bg-white/10 backdrop-filter backdrop-blur border border-white/20 rounded-xl p-8">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-blue-400/30 rounded-lg flex items-center justify-center">
+                                <svg data-lucide="mail" class="w-5 h-5 text-blue-200" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                            </div>
+                            <h4 class="text-lg font-bold text-white">Email</h4>
+                        </div>
+                        <p class="text-blue-100">support@hotelpro.vn</p>
+                        <p class="text-blue-200 text-sm mt-2">Phản hồi trong 24 giờ</p>
+                    </div>
+
+                    <div class="bg-white/10 backdrop-filter backdrop-blur border border-white/20 rounded-xl p-8">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-blue-400/30 rounded-lg flex items-center justify-center">
+                                <svg data-lucide="phone" class="w-5 h-5 text-blue-200" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            </div>
+                            <h4 class="text-lg font-bold text-white">Điện Thoại</h4>
+                        </div>
+                        <p class="text-blue-100">(+84) 1234 567 890</p>
+                        <p class="text-blue-200 text-sm mt-2">Thứ 2 - Thứ 6, 8h - 18h</p>
+                    </div>
+
+                    <div class="bg-white/10 backdrop-filter backdrop-blur border border-white/20 rounded-xl p-8">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-blue-400/30 rounded-lg flex items-center justify-center">
+                                <svg data-lucide="map-pin" class="w-5 h-5 text-blue-200" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                            </div>
+                            <h4 class="text-lg font-bold text-white">Địa Chỉ</h4>
+                        </div>
+                        <p class="text-blue-100">Trường Đại học Công nghệ Thông tin</p>
+                        <p class="text-blue-200 text-sm mt-2">Thành phố Hồ Chí Minh, Việt Nam</p>
+                    </div>
+
+                    <div class="bg-white/10 backdrop-filter backdrop-blur border border-white/20 rounded-xl p-8">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-blue-400/30 rounded-lg flex items-center justify-center">
+                                <svg data-lucide="file-text" class="w-5 h-5 text-blue-200" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="13" x2="12" y2="17"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                            </div>
+                            <h4 class="text-lg font-bold text-white">Tài Liệu</h4>
+                        </div>
+                        <p class="text-blue-100">Hướng dẫn sử dụng chi tiết</p>
+                        <p class="text-blue-200 text-sm mt-2">Tài liệu kỹ thuật & API</p>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-filter backdrop-blur border border-white/20 rounded-xl p-8 text-center">
+                    <p class="text-blue-100 mb-4">Sẵn sàng quản lý nhà nghỉ của bạn một cách thông minh?</p>
+                    <button onclick="showAuthScreen('login')" class="px-8 py-3 bg-white text-blue-900 rounded-lg font-bold hover:shadow-2xl hover:shadow-white/20 transition-all transform hover:scale-105">
+                        Đăng Nhập Ngay
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="border-t border-white/10 bg-gradient-to-b from-transparent to-blue-900/30 backdrop-filter backdrop-blur mt-auto">
+            <div class="max-w-6xl mx-auto px-8 py-12">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                    <div>
+                        <div class="flex items-center gap-2 text-white font-bold mb-4">
+                            <svg data-lucide="hotel" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2Z"/><path d="M9 7h1v10H9V7M14 7h1v10h-1V7M9 17h6v2H9v-2"/></svg>
+                            <span>Hotel Pro</span>
+                        </div>
+                        <p class="text-blue-200 text-sm">Giải pháp quản lý nhà nghỉ hiện đại</p>
+                    </div>
+
+                    <div>
+                        <h4 class="text-white font-bold mb-4">Sản Phẩm</h4>
+                        <ul class="space-y-2 text-blue-200 text-sm">
+                            <li><a href="javascript:void(0)" class="hover:text-white transition">Tính Năng</a></li>
+                            <li><a href="javascript:void(0)" class="hover:text-white transition">Giá Cả</a></li>
+                            <li><a href="javascript:void(0)" class="hover:text-white transition">Bảo Mật</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 class="text-white font-bold mb-4">Công Ty</h4>
+                        <ul class="space-y-2 text-blue-200 text-sm">
+                            <li><a href="javascript:void(0)" class="hover:text-white transition">Về Chúng Tôi</a></li>
+                            <li><a href="javascript:void(0)" class="hover:text-white transition">Blog</a></li>
+                            <li><a href="javascript:void(0)" class="hover:text-white transition">Tuyển Dụng</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 class="text-white font-bold mb-4">Hỗ Trợ</h4>
+                        <ul class="space-y-2 text-blue-200 text-sm">
+                            <li><a href="javascript:void(0)" class="hover:text-white transition">Liên Hệ</a></li>
+                            <li><a href="javascript:void(0)" class="hover:text-white transition">Câu Hỏi Thường Gặp</a></li>
+                            <li><a href="javascript:void(0)" class="hover:text-white transition">Điều Khoản Dịch Vụ</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="border-t border-white/10 pt-8">
+                    <div class="flex flex-col md:flex-row justify-between items-center">
+                        <p class="text-blue-200 text-sm">© 2025 Hotel Pro. Bảo lưu mọi quyền. Phát triển tại Đại học Công nghệ Thông tin.</p>
+                        <div class="flex gap-6 mt-4 md:mt-0">
+                            <a href="javascript:void(0)" class="text-blue-200 hover:text-white transition">
+                                <svg data-lucide="facebook" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a6 6 0 0 0-6 6v3H7v4h2v8h4v-8h3l1-4h-4V8a2 2 0 0 1 2-2h1z"/></svg>
+                            </a>
+                            <a href="javascript:void(0)" class="text-blue-200 hover:text-white transition">
+                                <svg data-lucide="twitter" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2s9 5 20 5a9.5 9.5 0 00-9-5.5c4.75 2.25 7-7 7-7"/></svg>
+                            </a>
+                            <a href="javascript:void(0)" class="text-blue-200 hover:text-white transition">
+                                <svg data-lucide="linkedin" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
     <div id="auth-screen">
         <!-- Login Form -->
         <div id="login-form" class="auth-card animate-slide-in">
