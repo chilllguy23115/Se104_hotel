@@ -679,10 +679,10 @@ def preview_bill(booking_id: int, db: Session = Depends(get_db)):
     if not booking: raise HTTPException(status_code=404, detail="Không thấy hóa đơn")
     room = booking.room
     category = room.category
-    now = datetime.now(timezone.utc)
-    time_diff = now - booking.check_in_time.replace(tzinfo=now.tzinfo)
+    now = datetime.now()
+    time_diff = now - booking.check_in_time.replace(tzinfo=None)
     hours_stayed = math.ceil(time_diff.total_seconds() / 3600)
-    if hours_stayed == 0: hours_stayed = 1
+    if hours_stayed <= 0: hours_stayed = 1
     
     room_charge = 0
     if booking.rental_type == RentalTypeEnum.HOURLY:
@@ -711,12 +711,12 @@ def check_out_room(booking_id: int, req: CheckoutRequest, db: Session = Depends(
     
     room = booking.room
     category = room.category
-    checkout_time = datetime.now(timezone.utc)
+    checkout_time = datetime.now()
     booking.check_out_time = checkout_time
     
-    time_diff = checkout_time - booking.check_in_time.replace(tzinfo=checkout_time.tzinfo)
+    time_diff = checkout_time - booking.check_in_time.replace(tzinfo=None)
     hours_stayed = math.ceil(time_diff.total_seconds() / 3600)
-    if hours_stayed == 0: hours_stayed = 1
+    if hours_stayed <= 0: hours_stayed = 1
     
     room_charge = 0
     if booking.rental_type == RentalTypeEnum.HOURLY:
