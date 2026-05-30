@@ -9,28 +9,39 @@ export function openCheckIn(id, num) {
     currentRoomId = id; 
     document.getElementById('modal-room-number').innerText = num; 
 
-    // Set default and min check-in time to local time
+    // Set default and min check-in date/time separately
+    const checkinDateInput = document.getElementById('checkin-date');
     const checkinTimeInput = document.getElementById('checkin-time');
-    if (checkinTimeInput) {
+    if (checkinDateInput && checkinTimeInput) {
         const now = new Date();
         const tzOffset = now.getTimezoneOffset() * 60000;
-        const localISOTime = (new Date(now - tzOffset)).toISOString().slice(0, 16);
-        checkinTimeInput.value = localISOTime;
-        checkinTimeInput.min = localISOTime;
+        const localISO = (new Date(now - tzOffset)).toISOString();
+        
+        const localDate = localISO.slice(0, 10);
+        const localTime = localISO.slice(11, 16);
+
+        checkinDateInput.value = localDate;
+        checkinDateInput.min = localDate;
+        checkinTimeInput.value = localTime;
     }
 
     document.getElementById('checkin-modal').classList.remove('hidden'); 
 }
 
 export async function confirmCheckIn() {
-    const checkinTimeVal = document.getElementById('checkin-time').value;
-    if (checkinTimeVal) {
-        const selectedTime = new Date(checkinTimeVal);
-        const now = new Date();
-        if (selectedTime < new Date(now.getTime() - 60000)) {
-            alert("Thời gian nhận phòng không được trước thời gian hiện tại!");
-            return;
-        }
+    const dateVal = document.getElementById('checkin-date').value;
+    const timeVal = document.getElementById('checkin-time').value;
+    
+    if (!dateVal || !timeVal) {
+        alert("Vui lòng điền đầy đủ Ngày và Giờ nhận phòng!");
+        return;
+    }
+
+    const selectedTime = new Date(`${dateVal}T${timeVal}`);
+    const now = new Date();
+    if (selectedTime < new Date(now.getTime() - 60000)) {
+        alert("Thời gian nhận phòng không được trước thời gian hiện tại!");
+        return;
     }
 
     const payload = { 
@@ -40,7 +51,7 @@ export async function confirmCheckIn() {
         guest_id_number: document.getElementById('guest-id').value, 
         guest_dob: document.getElementById('guest-dob').value, 
         rental_type: document.getElementById('rental-type').value,
-        check_in_time: checkinTimeVal ? new Date(checkinTimeVal).toISOString() : null
+        check_in_time: selectedTime.toISOString()
     };
     const res = await fetch(`${API_URL}/bookings/check-in`, { 
         method: 'POST', 

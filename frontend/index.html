@@ -836,9 +836,14 @@
                         <option value="OVERNIGHT">Thuê qua đêm</option>
                         <option value="DAILY">Thuê theo ngày</option>
                     </select></div>
-                <div class="space-y-1"><label class="text-[10px] font-bold text-gray-500 uppercase">Thời gian nhận phòng (Mặc định: Hiện tại)</label><input
-                        type="datetime-local" id="checkin-time"
-                        class="w-full px-4 py-2.5 bg-gray-50 border rounded-lg outline-none"></div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1"><label class="text-[10px] font-bold text-gray-500 uppercase">Ngày nhận phòng</label><input
+                            type="date" id="checkin-date"
+                            class="w-full px-4 py-2.5 bg-gray-50 border rounded-lg outline-none"></div>
+                    <div class="space-y-1"><label class="text-[10px] font-bold text-gray-500 uppercase">Giờ nhận phòng</label><input
+                            type="time" id="checkin-time"
+                            class="w-full px-4 py-2.5 bg-gray-50 border rounded-lg outline-none"></div>
+                </div>
             </div>
             <div class="p-6 bg-gray-50 border-t border-gray-200 flex justify-end gap-3"><button onclick="closeModal()"
                     class="win-btn win-btn-secondary">Hủy</button><button onclick="confirmCheckIn()"
