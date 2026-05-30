@@ -69,6 +69,11 @@ export async function loadGuestChat() {
         nameInput.value = currentUser.username;
     }
 
+    const badge = document.getElementById('guest-chat-username-badge');
+    if (badge) {
+        badge.innerText = "@" + currentUser.username;
+    }
+
     await fetchAndRenderGuestMessages();
 
     // Start auto polling if not already running
@@ -100,7 +105,7 @@ async function fetchAndRenderGuestMessages(isSilent = false) {
                         <i data-lucide="message-square" class="w-8 h-8"></i>
                     </div>
                     <p class="text-sm font-bold text-gray-500">Chưa có tin nhắn nào</p>
-                    <p class="text-xs text-gray-400 max-w-xs">Gửi lời nhắn ở cột bên trái để bắt đầu trò chuyện với Lễ tân nhà nghỉ.</p>
+                    <p class="text-xs text-gray-400 max-w-xs">Nhập tin nhắn ở bên dưới để bắt đầu trò chuyện trực tuyến với Lễ tân.</p>
                 </div>
             `;
             lucide.createIcons();
@@ -151,19 +156,18 @@ function pollGuestMessages() {
 export async function sendGuestChatMessage() {
     const nameInput = document.getElementById('guest-chat-name');
     const phoneInput = document.getElementById('guest-chat-phone');
-    const messageInput = document.getElementById('guest-chat-message');
+    const messageInput = document.getElementById('guest-chat-message-input');
 
     const name = nameInput.value.trim();
     const phone = phoneInput.value.trim();
     const message = messageInput.value.trim();
 
     if (!phone) {
-        alert("Vui lòng nhập Số điện thoại liên hệ!");
+        alert("Vui lòng nhập Số điện thoại liên hệ ở góc trên!");
         return;
     }
     if (!message) {
-        alert("Vui lòng nhập nội dung tin nhắn!");
-        return;
+        return; // Don't send empty messages
     }
 
     try {

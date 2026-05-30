@@ -713,48 +713,38 @@
         <div id="section-guest-chat" class="flex-1 flex flex-col overflow-hidden hidden-section">
             <header class="h-20 mica-effect border-b border-gray-200 flex items-center justify-between px-10">
                 <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
-                    <i data-lucide="message-square" class="w-6 h-6 text-blue-600"></i> Hỗ trợ & Chat với Lễ tân
+                    <i data-lucide="message-square" class="w-6 h-6 text-blue-600"></i> Hỗ trợ & Chat trực tuyến
                 </h2>
                 <button onclick="window.loadGuestChat()"
                     class="p-2.5 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-600 hover:text-white transition-all shadow-sm"><i
                         data-lucide="rotate-cw" class="w-5 h-5"></i></button>
             </header>
-            <div class="flex-1 p-8 bg-[#fbfbfb] overflow-hidden flex gap-8 h-full">
-                <!-- Left: Send message form -->
-                <div class="w-96 bg-white rounded-3xl border border-gray-200 p-6 shadow-sm flex flex-col justify-between h-full">
-                    <div class="space-y-6">
-                        <div class="space-y-2">
-                            <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wider">Gửi tin nhắn mới</h3>
-                            <p class="text-xs text-gray-400">Tin nhắn của bạn sẽ được gửi trực tiếp đến quầy Lễ tân nhà nghỉ.</p>
-                        </div>
-                        <div class="space-y-4 animate-slide-in">
-                            <div class="space-y-1">
-                                <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Họ và tên</label>
-                                <input type="text" id="guest-chat-name" class="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500" placeholder="Nguyễn Văn A">
-                            </div>
-                            <div class="space-y-1">
-                                <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Số điện thoại *</label>
-                                <input type="text" id="guest-chat-phone" class="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500" placeholder="09xxxxxxxx">
-                            </div>
-                            <div class="space-y-1">
-                                <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Lời nhắn</label>
-                                <textarea id="guest-chat-message" rows="5" class="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 resize-none" placeholder="Nhập yêu cầu cần tư vấn hoặc hỗ trợ..."></textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <button onclick="window.sendGuestChatMessage()" class="w-full py-4 bg-blue-600 text-white rounded-xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all flex items-center justify-center gap-2">
-                        <i data-lucide="send" class="w-4 h-4"></i> Gửi yêu cầu
-                    </button>
-                </div>
-
-                <!-- Right: Message History -->
+            <div class="flex-1 p-8 bg-[#fbfbfb] overflow-hidden flex flex-col h-full">
                 <div class="flex-1 bg-white rounded-3xl border border-gray-200 shadow-sm flex flex-col overflow-hidden h-full">
-                    <div class="px-6 py-4 border-b bg-gray-50 flex items-center justify-between">
-                        <span class="text-xs font-bold text-gray-600 uppercase tracking-wider">Lịch sử hội thoại</span>
-                        <span class="px-2.5 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase">Trực tuyến</span>
+                    <!-- Top Bar with Info Inputs -->
+                    <div class="px-6 py-4 border-b bg-gray-50 flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs font-bold text-gray-600 uppercase tracking-wider">Thông tin liên hệ:</span>
+                            <input type="text" id="guest-chat-name" placeholder="Họ và tên" class="px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-blue-500 w-44 font-semibold text-gray-700" />
+                            <input type="text" id="guest-chat-phone" placeholder="Số điện thoại *" class="px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-blue-500 w-44 font-semibold text-gray-700" />
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="px-2.5 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase">Trực tuyến</span>
+                            <span class="px-2.5 py-1 bg-gray-100 text-gray-600 rounded-full text-[10px] font-bold" id="guest-chat-username-badge">guest</span>
+                        </div>
                     </div>
+
+                    <!-- Chat History -->
                     <div id="guest-chat-history" class="flex-1 p-6 overflow-y-auto space-y-4 bg-gray-50/50 flex flex-col min-h-0">
                         <!-- Messages will load here -->
+                    </div>
+
+                    <!-- Bottom Reply Bar -->
+                    <div class="p-4 border-t bg-white flex gap-3 items-center">
+                        <input type="text" id="guest-chat-message-input" placeholder="Nhập tin nhắn gửi đến Lễ tân..." onkeydown="if(event.key === 'Enter') window.sendGuestChatMessage()" class="flex-1 px-4 py-3 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                        <button onclick="window.sendGuestChatMessage()" class="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-md hover:bg-blue-700 transition-all flex items-center gap-2">
+                            <i data-lucide="send" class="w-4 h-4"></i> Gửi
+                        </button>
                     </div>
                 </div>
             </div>
