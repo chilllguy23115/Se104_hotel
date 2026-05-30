@@ -46,7 +46,11 @@ class ShiftStatusEnum(str, Enum):
 
 # Đường dẫn tới thư mục database
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DB_PATH = os.path.join(BASE_DIR, "database", "nhanghi_hotel.db")
+db_dir = os.path.join(BASE_DIR, "database")
+if not os.path.exists(db_dir):
+    os.makedirs(db_dir, exist_ok=True)
+
+DB_PATH = os.path.join(db_dir, "nhanghi_hotel.db")
 SQLALCHEMY_DATABASE_URL = f"sqlite:///{DB_PATH}"
 engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -135,6 +139,15 @@ class Shift(Base):
     status: Mapped[ShiftStatusEnum] = mapped_column(default=ShiftStatusEnum.OPEN)
     
     user: Mapped["User"] = relationship()
+
+class Feedback(Base):
+    __tablename__ = "feedbacks"
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    guest_name: Mapped[str] = mapped_column(String(100), nullable=False)
+    email: Mapped[str] = mapped_column(String(100), nullable=False)
+    phone_number: Mapped[str] = mapped_column(String(20), nullable=False)
+    message: Mapped[str] = mapped_column(String(500), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 # ==========================================
 # 3. INITIALIZATION & LIFESPAN
@@ -307,6 +320,19 @@ class ShiftResponse(BaseModel):
     total_transfer: int
     status: ShiftStatusEnum
 
+class FeedbackCreate(BaseModel):
+    guest_name: str
+    email: str
+    phone_number: str
+    message: str
+
+    @field_validator('phone_number')
+    @classmethod
+    def validate_phone(cls, v):
+        if not v or not re.match(r'^\+?[\d\s-]{9,15}$', v):
+            raise ValueError('Số điện thoại không hợp lệ (phải gồm 9-15 chữ số)')
+        return v
+
 def get_db():
     db = SessionLocal()
     try:
@@ -327,6 +353,16 @@ def check_janitor_role(x_role: str = Header(None)):
 def check_not_guest(x_role: str = Header(None)):
     if x_role == UserRoleEnum.GUEST:
         raise HTTPException(status_code=403, detail="Khách hàng không có quyền thực hiện hành động này")
+    return x_role
+
+def check_guest_role(x_role: str = Header(None)):
+    if x_role != UserRoleEnum.GUEST:
+        raise HTTPException(status_code=403, detail="Chỉ tài khoản Khách hàng (Guest) mới có quyền gửi tin nhắn tư vấn/hỗ trợ")
+    return x_role
+
+def check_receptionist_or_admin(x_role: str = Header(None)):
+    if x_role not in [UserRoleEnum.RECEPTIONIST, UserRoleEnum.ADMIN]:
+        raise HTTPException(status_code=403, detail="Chỉ Lễ tân hoặc Quản lý mới có quyền xem thông tin phản hồi")
     return x_role
 
 # ==========================================
@@ -735,6 +771,30 @@ def end_shift(user_id: int, db: Session = Depends(get_db), role: str = Depends(c
         "total_transfer": shift.total_transfer,
         "report": f"Tổng tiền mặt: {shift.total_cash}đ, Chuyển khoản: {shift.total_transfer}đ"
     }
+
+@app.post("/api/feedback", tags=["Ý kiến khách hàng"])
+def create_feedback(req: FeedbackCreate, db: Session = Depends(get_db), role: str = Depends(check_guest_role)):
+    new_fb = Feedback(
+        guest_name=req.guest_name,
+        email=req.email,
+        phone_number=req.phone_number,
+        message=req.message
+    )
+    db.add(new_fb)
+    db.commit()
+    return {"message": "Gửi yêu cầu tư vấn thành công! Lễ tân sẽ sớm liên hệ với bạn."}
+
+@app.get("/api/feedback", tags=["Ý kiến khách hàng"])
+def list_feedbacks(db: Session = Depends(get_db), role: str = Depends(check_receptionist_or_admin)):
+    feedbacks = db.query(Feedback).order_by(Feedback.created_at.desc()).all()
+    return [{
+        "id": f.id,
+        "guest_name": f.guest_name,
+        "email": f.email,
+        "phone_number": f.phone_number,
+        "message": f.message,
+        "created_at": f.created_at
+    } for f in feedbacks]
 
 # Mount static files for frontend
 FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")

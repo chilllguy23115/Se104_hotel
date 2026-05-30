@@ -94,3 +94,13 @@ window.closeBillModal = () => document.getElementById('bill-modal').classList.ad
 window.closeModal = () => document.getElementById('checkin-modal').classList.add('hidden');
 window.closeServiceModal = () => document.getElementById('service-modal').classList.add('hidden');
 window.closeViewRoomModal = () => document.getElementById('view-room-modal').classList.add('hidden');
+
+window.openAuthModal = (type = 'login') => {
+    document.getElementById('auth-modal-backdrop').classList.remove('hidden');
+    document.getElementById('login-form').classList.toggle('hidden-section', type === 'register');
+    document.getElementById('register-form').classList.toggle('hidden-section', type === 'login');
+    lucide.createIcons();
+};
+window.closeAuthModal = () => {
+    document.getElementById('auth-modal-backdrop').classList.add('hidden');
+};

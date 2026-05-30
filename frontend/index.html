@@ -16,9 +16,8 @@
             inset: 0;
             z-index: 9999;
             background: #f3f3f3;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            overflow-y: auto;
+            scroll-behavior: smooth;
         }
 
         .auth-card {
@@ -61,82 +60,361 @@
 
 <body class="flex h-screen overflow-hidden bg-[#f3f3f3]">
 
-    <!-- Auth Screen (Login & Register) -->
+    <!-- Auth Screen (Landing Welcome Page & Login/Register Modals) -->
     <div id="auth-screen">
-        <!-- Login Form -->
-        <div id="login-form" class="auth-card animate-slide-in">
-            <div class="flex flex-col items-center mb-10">
-                <div class="p-4 bg-blue-600 rounded-2xl shadow-xl mb-4">
-                    <i data-lucide="hotel" class="w-10 h-10 text-white"></i>
+        <!-- Landing Page Header/Navbar -->
+        <header class="sticky top-0 z-50 mica-effect border-b border-gray-200/80 px-6 lg:px-16 py-4 flex items-center justify-between shadow-sm">
+            <div class="flex items-center gap-3 text-blue-600">
+                <div class="p-2 bg-blue-600 rounded-lg shadow-md shadow-blue-200">
+                    <i data-lucide="hotel" class="w-6 h-6 text-white"></i>
                 </div>
-                <h2 class="text-2xl font-black text-gray-800">Đăng nhập</h2>
-                <p class="text-gray-400 text-sm">Chào mừng bạn quay trở lại</p>
+                <span class="text-xl font-bold text-gray-800 tracking-tight">Hotel Pro</span>
             </div>
-            <div class="space-y-4">
-                <div>
-                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Tên đăng
-                        nhập</label>
-                    <input type="text" id="login-user"
-                        class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                        placeholder="admin hoặc staff">
-                </div>
-                <div>
-                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Mật
-                        khẩu</label>
-                    <input type="password" id="login-pass"
-                        class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                        placeholder="••••••••">
-                </div>
-                <button onclick="handleLogin()"
-                    class="w-full py-4 bg-blue-600 text-white rounded-lg font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all mt-4">Đăng
-                    nhập</button>
+            
+            <!-- Navigation Links -->
+            <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-gray-600">
+                <a href="#about-section" class="hover:text-blue-600 transition-colors">Giới thiệu</a>
+                <a href="#features-section" class="hover:text-blue-600 transition-colors">Tính năng nổi bật</a>
+                <a href="#contact-section" class="hover:text-blue-600 transition-colors">Liên hệ</a>
+            </nav>
+            
+            <!-- Action Button -->
+            <div>
+                <button onclick="openAuthModal('login')" class="win-btn win-btn-primary flex items-center gap-2 shadow-md shadow-blue-100">
+                    <i data-lucide="log-in" class="w-4 h-4"></i>
+                    Đăng nhập hệ thống
+                </button>
             </div>
-            <div class="mt-6 text-center">
-                <button onclick="toggleAuth('register')" class="text-xs font-bold text-blue-600 hover:underline">Chưa có
-                    tài khoản? Đăng ký ngay</button>
-            </div>
-        </div>
+        </header>
 
-        <!-- Register Form -->
-        <div id="register-form" class="auth-card animate-slide-in hidden-section">
-            <div class="flex flex-col items-center mb-10">
-                <div class="p-4 bg-indigo-600 rounded-2xl shadow-xl mb-4">
-                    <i data-lucide="user-plus" class="w-10 h-10 text-white"></i>
-                </div>
-                <h2 class="text-2xl font-black text-gray-800">Đăng ký mới</h2>
-                <p class="text-gray-400 text-sm">Tạo tài khoản quản lý hoặc nhân viên</p>
+        <!-- Hero Section -->
+        <section class="relative px-6 lg:px-16 py-20 lg:py-28 overflow-hidden bg-gradient-to-b from-blue-50/40 via-white to-transparent">
+            <!-- Background grids/decorative shapes -->
+            <div class="absolute inset-0 z-0 pointer-events-none opacity-40">
+                <div class="absolute top-10 left-10 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
+                <div class="absolute bottom-10 right-10 w-96 h-96 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style="animation-delay: 2s;"></div>
             </div>
-            <div class="space-y-4">
-                <div>
-                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Tên đăng
-                        nhập</label>
-                    <input type="text" id="reg-user"
-                        class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+
+            <div class="relative z-10 max-w-5xl mx-auto text-center space-y-8">
+                <h1 class="text-4xl lg:text-6xl font-black text-gray-800 tracking-tight leading-tight max-w-4xl mx-auto">
+                    Hệ thống Quản lý Nhà nghỉ
+                </h1>
+                
+                <p class="text-lg text-gray-500 max-w-2xl mx-auto font-medium">
+                    Giải pháp tối ưu hóa vận hành nhà nghỉ. Theo dõi trạng thái phòng trực quan, tích hợp thanh toán minibar, giao ca trực chặt chẽ và tương thích mượt mà trên hệ điều hành Windows.
+                </p>
+
+                <div class="flex flex-wrap justify-center gap-4 pt-4">
+                    <button onclick="openAuthModal('login')" class="win-btn win-btn-primary px-8 py-3.5 text-base shadow-lg shadow-blue-200 flex items-center gap-2">
+                        Bắt đầu trải nghiệm <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </button>
+                    <a href="#features-section" class="win-btn win-btn-secondary px-8 py-3.5 text-base flex items-center gap-2">
+                        Khám phá tính năng <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                    </a>
                 </div>
-                <div>
-                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Mật
-                        khẩu</label>
-                    <input type="password" id="reg-pass"
-                        class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+
+                <!-- Preview Board -->
+                <div class="pt-12 max-w-4xl mx-auto animate-slide-in">
+                    <div class="fluent-card bg-white/80 backdrop-blur-md p-2 rounded-2xl shadow-2xl border border-gray-200">
+                        <div class="bg-gray-900 rounded-xl overflow-hidden shadow-inner border border-gray-800">
+                            <!-- Windows Toolbar Mockup -->
+                            <div class="bg-gray-800 px-4 py-2 flex items-center justify-between border-b border-gray-700/50">
+                                <div class="flex gap-1.5">
+                                    <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                                    <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+                                    <span class="w-3 h-3 rounded-full bg-green-500"></span>
+                                </div>
+                                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Hotel Pro - Sơ đồ phòng trực quan</span>
+                                <div class="w-4"></div>
+                            </div>
+                            <!-- Mock Content -->
+                            <div class="p-6 bg-[#f4f6f9] text-left text-gray-800 grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between h-28 border-l-4 border-l-green-500">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-sm font-bold text-gray-800">Phòng 101</span>
+                                        <span class="px-2 py-0.5 bg-green-50 text-[10px] font-extrabold text-green-600 rounded">TRỐNG</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400">STANDARD - 60.000đ/h</span>
+                                </div>
+                                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between h-28 border-l-4 border-l-red-500">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-sm font-bold text-gray-800">Phòng 102</span>
+                                        <span class="px-2 py-0.5 bg-red-50 text-[10px] font-extrabold text-red-600 rounded">ĐANG Ở</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400">STANDARD - 60.000đ/h</span>
+                                </div>
+                                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between h-28 border-l-4 border-l-amber-500">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-sm font-bold text-gray-800">Phòng 201</span>
+                                        <span class="px-2 py-0.5 bg-amber-50 text-[10px] font-extrabold text-amber-600 rounded">DỌN PHÒNG</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400">VIP - 100.000đ/h</span>
+                                </div>
+                                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between h-28 border-l-4 border-l-green-500">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-sm font-bold text-gray-800">Phòng 202</span>
+                                        <span class="px-2 py-0.5 bg-green-50 text-[10px] font-extrabold text-green-600 rounded">TRỐNG</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400">VIP - 100.000đ/h</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Chức
-                        vụ</label>
-                    <select id="reg-role"
-                        class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-                        <option value="RECEPTIONIST">Lễ tân</option>
-                        <option value="ADMIN">Quản lý</option>
-                        <option value="JANITOR">Lao công</option>
-                        <option value="GUEST">Khách hàng</option>
-                    </select>
-                </div>
-                <button onclick="handleRegister()"
-                    class="w-full py-4 bg-indigo-600 text-white rounded-lg font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition-all mt-4">Đăng
-                    ký tài khoản</button>
             </div>
-            <div class="mt-6 text-center">
-                <button onclick="toggleAuth('login')" class="text-xs font-bold text-indigo-600 hover:underline">Đã có
-                    tài khoản? Đăng nhập</button>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features-section" class="px-6 lg:px-16 py-20 bg-gray-50 border-t border-b border-gray-200/50">
+            <div class="max-w-5xl mx-auto space-y-12">
+                <div class="text-center space-y-4">
+                    <h2 class="text-3xl font-black text-gray-800 tracking-tight">Tính Năng Ưu Việt</h2>
+                    <p class="text-sm text-gray-400 uppercase tracking-widest font-bold">Giải pháp vận hành khép kín, tiện lợi và chính xác</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Feature 1 -->
+                    <div class="fluent-card bg-white p-6 flex flex-col gap-4 border border-gray-100">
+                        <div class="p-3 bg-blue-50 text-blue-600 rounded-xl w-fit shadow-inner">
+                            <i data-lucide="layout-dashboard" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800">Sơ đồ trực quan</h3>
+                        <p class="text-xs text-gray-500 leading-relaxed">
+                            Quản lý toàn bộ phòng ốc dưới dạng lưới, theo dõi trạng thái trống, có khách hoặc đang dọn dẹp theo thời gian thực một cách dễ dàng.
+                        </p>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="fluent-card bg-white p-6 flex flex-col gap-4 border border-gray-100">
+                        <div class="p-3 bg-indigo-50 text-indigo-600 rounded-xl w-fit shadow-inner">
+                            <i data-lucide="coffee" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800">Tích hợp Minibar</h3>
+                        <p class="text-xs text-gray-500 leading-relaxed">
+                            Thêm dịch vụ đồ uống, đồ ăn nhanh trực tiếp vào hóa đơn phòng. Tự động kiểm tra và khấu trừ số lượng sản phẩm tồn kho tức thời.
+                        </p>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="fluent-card bg-white p-6 flex flex-col gap-4 border border-gray-100">
+                        <div class="p-3 bg-green-50 text-green-600 rounded-xl w-fit shadow-inner">
+                            <i data-lucide="clock" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800">Giao ca chặt chẽ</h3>
+                        <p class="text-xs text-gray-500 leading-relaxed">
+                            Tự động tính tiền mặt và chuyển khoản đã thu được trong phiên trực của nhân viên. Bàn giao ca minh bạch, tránh thất thoát doanh số.
+                        </p>
+                    </div>
+
+                    <!-- Feature 4 -->
+                    <div class="fluent-card bg-white p-6 flex flex-col gap-4 border border-gray-100">
+                        <div class="p-3 bg-purple-50 text-purple-600 rounded-xl w-fit shadow-inner">
+                            <i data-lucide="bar-chart-3" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800">Báo cáo doanh thu</h3>
+                        <p class="text-xs text-gray-500 leading-relaxed">
+                            Trực quan hóa doanh số 7 ngày gần nhất bằng biểu đồ trực quan, phân tích nguồn thu chi tiết giữa tiền dịch vụ và tiền thuê phòng.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Us Section -->
+        <section id="about-section" class="px-6 lg:px-16 py-20 bg-white">
+            <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6">
+                    <div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg w-fit text-xs font-bold border border-indigo-100 uppercase tracking-widest">Về chúng tôi</div>
+                    <h2 class="text-3xl font-black text-gray-800 tracking-tight leading-tight">Giải Pháp Quản Lý Nhà Nghỉ</h2>
+                    <p class="text-sm text-gray-500 leading-relaxed font-medium">
+                        Chúng tôi tự hào là đơn vị tiên phong mang tới giải pháp phần mềm chuyên sâu giúp các cơ sở lưu trú tối ưu hóa 100% thời gian vận hành và nâng cao chất lượng dịch vụ phục vụ khách hàng. 
+                    </p>
+                    <p class="text-sm text-gray-500 leading-relaxed font-medium">
+                        Với tiêu chí đơn giản - chính xác - mượt mà, hệ thống tương thích tốt với mọi thiết bị màn hình cũng như hỗ trợ chế độ tương thích hệ điều hành Windows mượt mà nhất.
+                    </p>
+                    <div class="grid grid-cols-2 gap-6 pt-4">
+                        <div class="border-l-4 border-blue-500 pl-4">
+                            <h4 class="text-2xl font-black text-blue-600">100%</h4>
+                            <p class="text-xs font-bold text-gray-400">Thời gian thực</p>
+                        </div>
+                        <div class="border-l-4 border-indigo-500 pl-4">
+                            <h4 class="text-2xl font-black text-indigo-600">0%</h4>
+                            <p class="text-xs font-bold text-gray-400">Thất thoát dòng tiền</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative">
+                    <div class="fluent-card p-6 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl shadow-xl text-white space-y-6">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="check-circle" class="w-8 h-8"></i>
+                            <h3 class="text-xl font-bold">Cam kết chất lượng</h3>
+                        </div>
+                        <p class="text-sm text-white/80 leading-relaxed">
+                            Hỗ trợ tối ưu hóa quy trình nhập liệu khách hàng, tự động kiểm tra định dạng thẻ CCCD, kiểm tra độ tuổi trên 18 và đồng bộ dữ liệu bảo mật an toàn tuyệt đối.
+                        </p>
+                        <ul class="space-y-2 text-xs font-semibold text-white/90">
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4"></i> Hỗ trợ kỹ thuật 24/7</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4"></i> Sao lưu cơ sở dữ liệu định kỳ</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4"></i> Tương thích tốt với máy in hóa đơn</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact-section" class="px-6 lg:px-16 py-20 bg-gray-50 border-t border-gray-200/50">
+            <div class="max-w-5xl mx-auto space-y-12">
+                <div class="text-center space-y-4">
+                    <h2 class="text-3xl font-black text-gray-800 tracking-tight">Thông Tin Liên Hệ</h2>
+                    <p class="text-sm text-gray-400 uppercase tracking-widest font-bold">Kết nối với chúng tôi bất cứ khi nào bạn cần hỗ trợ</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Contact Cards -->
+                    <div class="lg:col-span-1 space-y-4">
+                        <div class="fluent-card bg-white p-5 flex items-start gap-4 border border-gray-100">
+                            <div class="p-3 bg-blue-50 text-blue-600 rounded-xl shadow-sm">
+                                <i data-lucide="map-pin" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-gray-800 uppercase">Địa chỉ</h4>
+                                <p class="text-xs text-gray-500 mt-1 leading-relaxed">Khu phố 6, P. Linh Trung, Tp. Thủ Đức, Tp. Hồ Chí Minh</p>
+                            </div>
+                        </div>
+
+                        <div class="fluent-card bg-white p-5 flex items-start gap-4 border border-gray-100">
+                            <div class="p-3 bg-indigo-50 text-indigo-600 rounded-xl shadow-sm">
+                                <i data-lucide="phone" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-gray-800 uppercase">Hotline</h4>
+                                <p class="text-xs text-gray-500 mt-1 hover:text-indigo-600 transition-colors font-bold">+84 28 372 52002</p>
+                            </div>
+                        </div>
+
+                        <div class="fluent-card bg-white p-5 flex items-start gap-4 border border-gray-100">
+                            <div class="p-3 bg-green-50 text-green-600 rounded-xl shadow-sm">
+                                <i data-lucide="mail" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-gray-800 uppercase">Email</h4>
+                                <p class="text-xs text-gray-500 mt-1 hover:text-green-600 transition-colors font-bold">support@hotelpro.vn</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Contact Mockup (Simulating Map / Form) -->
+                    <div class="lg:col-span-2">
+                        <div class="fluent-card bg-white p-6 border border-gray-100 h-full flex flex-col justify-between">
+                            <div class="space-y-4">
+                                <h4 class="text-sm font-bold text-gray-800 uppercase flex items-center gap-2">
+                                    <i data-lucide="send" class="w-4 h-4 text-blue-600"></i> Gửi yêu cầu tư vấn
+                                </h4>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <input type="text" placeholder="Họ và tên" class="w-full text-xs px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
+                                    <input type="email" placeholder="Địa chỉ Email" class="w-full text-xs px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <textarea placeholder="Nội dung cần hỗ trợ..." rows="4" class="w-full text-xs px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+                            </div>
+                            <div class="mt-4 text-right">
+                                <button onclick="alert('Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi trong vòng 24 giờ.')" class="win-btn win-btn-primary shadow-lg shadow-blue-100">Gửi tin nhắn</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-gray-900 text-white py-12 px-6 lg:px-16 border-t border-gray-800">
+            <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="flex items-center gap-3">
+                    <div class="p-2 bg-blue-600 rounded-lg">
+                        <i data-lucide="hotel" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <span class="text-base font-bold tracking-tight">Hotel Pro</span>
+                </div>
+                <p class="text-xs text-gray-500">
+                    &copy; 2026 Nhóm 2 - SE104.Q29 - UIT. Bảo lưu mọi quyền.
+                </p>
+            </div>
+        </footer>
+
+        <!-- Modal Auth Container (Login / Register popups) -->
+        <div id="auth-modal-backdrop" class="hidden fixed inset-0 z-[10000] flex items-center justify-center bg-black/40 backdrop-blur-sm">
+            <!-- Login Form -->
+            <div id="login-form" class="auth-card animate-slide-in relative">
+                <button onclick="closeAuthModal()" class="absolute top-4 right-4 p-1.5 hover:bg-gray-100 rounded-full transition-colors">
+                    <i data-lucide="x" class="w-5 h-5 text-gray-400"></i>
+                </button>
+                <div class="flex flex-col items-center mb-10">
+                    <div class="p-4 bg-blue-600 rounded-2xl shadow-xl mb-4">
+                        <i data-lucide="hotel" class="w-10 h-10 text-white"></i>
+                    </div>
+                    <h2 class="text-2xl font-black text-gray-800">Đăng nhập</h2>
+                    <p class="text-gray-400 text-sm">Chào mừng bạn quay trở lại</p>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Tên đăng nhập</label>
+                        <input type="text" id="login-user"
+                            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                            placeholder="admin hoặc staff">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Mật khẩu</label>
+                        <input type="password" id="login-pass"
+                            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                            placeholder="••••••••">
+                    </div>
+                    <button onclick="handleLogin()"
+                        class="w-full py-4 bg-blue-600 text-white rounded-lg font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all mt-4">Đăng nhập</button>
+                </div>
+                <div class="mt-6 text-center">
+                    <button onclick="toggleAuth('register')" class="text-xs font-bold text-blue-600 hover:underline">Chưa có tài khoản? Đăng ký ngay</button>
+                </div>
+            </div>
+
+            <!-- Register Form -->
+            <div id="register-form" class="auth-card animate-slide-in hidden-section relative">
+                <button onclick="closeAuthModal()" class="absolute top-4 right-4 p-1.5 hover:bg-gray-100 rounded-full transition-colors">
+                    <i data-lucide="x" class="w-5 h-5 text-gray-400"></i>
+                </button>
+                <div class="flex flex-col items-center mb-10">
+                    <div class="p-4 bg-indigo-600 rounded-2xl shadow-xl mb-4">
+                        <i data-lucide="user-plus" class="w-10 h-10 text-white"></i>
+                    </div>
+                    <h2 class="text-2xl font-black text-gray-800">Đăng ký mới</h2>
+                    <p class="text-gray-400 text-sm">Tạo tài khoản quản lý hoặc nhân viên</p>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Tên đăng nhập</label>
+                        <input type="text" id="reg-user"
+                            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Mật khẩu</label>
+                        <input type="password" id="reg-pass"
+                            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Chức vụ</label>
+                        <select id="reg-role"
+                            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                            <option value="RECEPTIONIST">Lễ tân</option>
+                            <option value="ADMIN">Quản lý</option>
+                            <option value="JANITOR">Lao công</option>
+                            <option value="GUEST">Khách hàng</option>
+                        </select>
+                    </div>
+                    <button onclick="handleRegister()"
+                        class="w-full py-4 bg-indigo-600 text-white rounded-lg font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition-all mt-4">Đăng ký tài khoản</button>
+                </div>
+                <div class="mt-6 text-center">
+                    <button onclick="toggleAuth('login')" class="text-xs font-bold text-indigo-600 hover:underline">Đã có tài khoản? Đăng nhập</button>
+                </div>
             </div>
         </div>
     </div>
