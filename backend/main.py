@@ -613,6 +613,7 @@ def check_in_room(req: CheckInRequest, db: Session = Depends(get_db), role: str 
     if req.check_in_time:
         in_time = req.check_in_time
         if in_time.tzinfo is not None:
+            in_time = in_time.astimezone()
             in_time = in_time.replace(tzinfo=None)
         if in_time < (datetime.now() - timedelta(minutes=1)):
             raise HTTPException(status_code=400, detail="Thời gian nhận phòng không được trước thời gian hiện tại")

@@ -37,7 +37,10 @@ export async function confirmCheckIn() {
         return;
     }
 
-    const selectedTime = new Date(`${dateVal}T${timeVal}`);
+    const [year, month, day] = dateVal.split('-').map(Number);
+    const [hour, minute] = timeVal.split(':').map(Number);
+    const selectedTime = new Date(year, month - 1, day, hour, minute);
+    
     const now = new Date();
     if (selectedTime < new Date(now.getTime() - 60000)) {
         alert("Thời gian nhận phòng không được trước thời gian hiện tại!");
