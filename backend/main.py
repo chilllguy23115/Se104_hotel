@@ -944,4 +944,8 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     # Disable reload in production (when PORT env is set) to prevent overhead and watchfiles warnings on Render
     reload_enabled = "PORT" not in os.environ
-    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=reload_enabled)
+    if reload_enabled:
+        uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)
+    else:
+        # Pass the app object directly in production to prevent path/import resolution issues on Render
+        uvicorn.run(app, host="0.0.0.0", port=port)
