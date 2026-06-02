@@ -64,9 +64,7 @@ async function fetchAndRenderGuestMessages(isSilent = false) {
             if (msg.sender_role === 'GUEST') {
                 return `
                     <div class="flex flex-col items-end gap-1 mb-2">
-                        <div class="bg-blue-600 text-white px-4 py-2.5 rounded-2xl rounded-tr-sm max-w-md text-sm shadow-sm">
-                            ${escapeHtml(msg.message)}
-                        </div>
+                        <div class="bg-blue-600 text-white px-4 py-2.5 rounded-2xl rounded-tr-sm max-w-md text-sm shadow-sm whitespace-pre-wrap">${escapeHtml(msg.message)}</div>
                         <span class="text-[9px] text-gray-400 font-medium mr-1">${time}</span>
                     </div>
                 `;
@@ -74,9 +72,7 @@ async function fetchAndRenderGuestMessages(isSilent = false) {
                 return `
                     <div class="flex flex-col items-start gap-1 mb-2">
                         <span class="text-[9px] text-gray-400 font-bold ml-1">Lễ tân nhà nghỉ</span>
-                        <div class="bg-white text-gray-800 px-4 py-2.5 rounded-2xl rounded-tl-sm border border-gray-200 max-w-md text-sm shadow-sm">
-                            ${escapeHtml(msg.message)}
-                        </div>
+                        <div class="bg-white text-gray-800 px-4 py-2.5 rounded-2xl rounded-tl-sm border border-gray-200 max-w-md text-sm shadow-sm whitespace-pre-wrap">${escapeHtml(msg.message)}</div>
                         <span class="text-[9px] text-gray-400 font-medium ml-1">${time}</span>
                     </div>
                 `;
@@ -253,18 +249,14 @@ async function fetchAndRenderActiveThreadMessages(isSilent = false) {
                 return `
                     <div class="flex flex-col items-start gap-1 mb-2">
                         <span class="text-[9px] text-gray-400 font-bold ml-1">${escapeHtml(msg.guest_name)} (Khách)</span>
-                        <div class="bg-white text-gray-800 px-4 py-2.5 rounded-2xl rounded-tl-sm border border-gray-200 max-w-md text-sm shadow-sm">
-                            ${escapeHtml(msg.message)}
-                        </div>
+                        <div class="bg-white text-gray-800 px-4 py-2.5 rounded-2xl rounded-tl-sm border border-gray-200 max-w-md text-sm shadow-sm whitespace-pre-wrap">${escapeHtml(msg.message)}</div>
                         <span class="text-[9px] text-gray-400 font-medium ml-1">${time}</span>
                     </div>
                 `;
             } else {
                 return `
                     <div class="flex flex-col items-end gap-1 mb-2">
-                        <div class="bg-indigo-600 text-white px-4 py-2.5 rounded-2xl rounded-tr-sm max-w-md text-sm shadow-sm">
-                            ${escapeHtml(msg.message)}
-                        </div>
+                        <div class="bg-indigo-600 text-white px-4 py-2.5 rounded-2xl rounded-tr-sm max-w-md text-sm shadow-sm whitespace-pre-wrap">${escapeHtml(msg.message)}</div>
                         <span class="text-[9px] text-gray-400 font-medium mr-1">${time}</span>
                     </div>
                 `;
