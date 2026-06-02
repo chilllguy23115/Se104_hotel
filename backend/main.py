@@ -140,14 +140,7 @@ class Shift(Base):
     
     user: Mapped["User"] = relationship()
 
-class Feedback(Base):
-    __tablename__ = "feedbacks"
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    guest_name: Mapped[str] = mapped_column(String(100), nullable=False)
-    email: Mapped[str] = mapped_column(String(100), nullable=False)
-    phone_number: Mapped[str] = mapped_column(String(20), nullable=False)
-    message: Mapped[str] = mapped_column(String(500), nullable=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
 
 class ChatMessage(Base):
     __tablename__ = "chat_messages"
@@ -349,42 +342,7 @@ class ShiftResponse(BaseModel):
     total_transfer: int
     status: ShiftStatusEnum
 
-class FeedbackCreate(BaseModel):
-    guest_name: str
-    email: str
-    phone_number: str
-    message: str
 
-    @field_validator('guest_name')
-    @classmethod
-    def validate_name(cls, v):
-        if not re.match(r"^[a-zA-Z\sÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểếệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ\s]+$", v):
-            raise ValueError('Họ tên chỉ được chứa chữ cái và khoảng trắng')
-        if ' ' not in v.strip():
-            raise ValueError('Họ tên phải có ít nhất một dấu cách (bao gồm Họ và Tên)')
-        return v
-
-    @field_validator('email')
-    @classmethod
-    def validate_email(cls, v):
-        if "@" not in v or ".com" not in v:
-            raise ValueError('Email phải chứa ký tự @ và có đuôi tên miền .com')
-        return v
-
-    @field_validator('phone_number')
-    @classmethod
-    def validate_phone(cls, v):
-        v_clean = re.sub(r'[\s-]', '', v)
-        if not re.match(r'^(\+84|84|0)(3|5|7|8|9)\d{8}$', v_clean):
-            raise ValueError('Số điện thoại không hợp lệ (phải bắt đầu bằng 0, 84 hoặc +84 và gồm 10 chữ số)')
-        return v_clean
-
-    @field_validator('message')
-    @classmethod
-    def validate_msg(cls, v):
-        if len(v.strip()) < 5:
-            raise ValueError('Nội dung tin nhắn phải có ít nhất 5 ký tự')
-        return v
 
 class ChatMessageCreate(BaseModel):
     message: str
@@ -871,29 +829,7 @@ def end_shift(user_id: int, db: Session = Depends(get_db), role: str = Depends(c
         "report": f"Tổng tiền mặt: {shift.total_cash}đ, Chuyển khoản: {shift.total_transfer}đ"
     }
 
-@app.post("/api/feedback", tags=["Ý kiến khách hàng"])
-def create_feedback(req: FeedbackCreate, db: Session = Depends(get_db), role: str = Depends(check_guest_role)):
-    new_fb = Feedback(
-        guest_name=req.guest_name,
-        email=req.email,
-        phone_number=req.phone_number,
-        message=req.message
-    )
-    db.add(new_fb)
-    db.commit()
-    return {"message": "Gửi yêu cầu tư vấn thành công! Lễ tân sẽ sớm liên hệ với bạn."}
 
-@app.get("/api/feedback", tags=["Ý kiến khách hàng"])
-def list_feedbacks(db: Session = Depends(get_db), role: str = Depends(check_receptionist_or_admin)):
-    feedbacks = db.query(Feedback).order_by(Feedback.created_at.desc()).all()
-    return [{
-        "id": f.id,
-        "guest_name": f.guest_name,
-        "email": f.email,
-        "phone_number": f.phone_number,
-        "message": f.message,
-        "created_at": f.created_at
-    } for f in feedbacks]
 
 @app.post("/api/chat", tags=["Hỗ trợ & Chat"])
 def guest_send_message(

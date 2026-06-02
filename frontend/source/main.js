@@ -21,7 +21,6 @@ import { fetchRevenue } from './modules/reports.js';
 import { fetchCurrentShift, startShift, endShift, fetchShiftHistory } from './modules/shifts.js';
 import { openCheckIn, confirmCheckIn, openBillModal, confirmCheckOut } from './modules/bookings.js';
 import { 
-    submitHomepageFeedback, 
     loadGuestChat, 
     sendGuestChatMessage, 
     loadReceptionistThreads, 
@@ -116,7 +115,6 @@ window.closeAuthModal = () => {
 };
 
 // Chat exposure
-window.submitHomepageFeedback = submitHomepageFeedback;
 window.loadGuestChat = loadGuestChat;
 window.sendGuestChatMessage = sendGuestChatMessage;
 window.loadReceptionistThreads = loadReceptionistThreads;

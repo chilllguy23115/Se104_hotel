@@ -63,24 +63,26 @@
     <!-- Auth Screen (Landing Welcome Page & Login/Register Modals) -->
     <div id="auth-screen">
         <!-- Landing Page Header/Navbar -->
-        <header class="sticky top-0 z-50 mica-effect border-b border-gray-200/80 px-6 lg:px-16 py-4 flex items-center justify-between shadow-sm">
+        <header
+            class="sticky top-0 z-50 mica-effect border-b border-gray-200/80 px-6 lg:px-16 py-4 flex items-center justify-between shadow-sm">
             <div class="flex items-center gap-3 text-blue-600">
                 <div class="p-2 bg-blue-600 rounded-lg shadow-md shadow-blue-200">
                     <i data-lucide="hotel" class="w-6 h-6 text-white"></i>
                 </div>
                 <span class="text-xl font-bold text-gray-800 tracking-tight">Hotel Pro</span>
             </div>
-            
+
             <!-- Navigation Links -->
             <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-gray-600">
                 <a href="#about-section" class="hover:text-blue-600 transition-colors">Giới thiệu</a>
                 <a href="#features-section" class="hover:text-blue-600 transition-colors">Tính năng nổi bật</a>
                 <a href="#contact-section" class="hover:text-blue-600 transition-colors">Liên hệ</a>
             </nav>
-            
+
             <!-- Action Button -->
             <div>
-                <button onclick="openAuthModal('login')" class="win-btn win-btn-primary flex items-center gap-2 shadow-md shadow-blue-100">
+                <button onclick="openAuthModal('login')"
+                    class="win-btn win-btn-primary flex items-center gap-2 shadow-md shadow-blue-100">
                     <i data-lucide="log-in" class="w-4 h-4"></i>
                     Đăng nhập hệ thống
                 </button>
@@ -88,72 +90,93 @@
         </header>
 
         <!-- Hero Section -->
-        <section class="relative px-6 lg:px-16 py-20 lg:py-28 overflow-hidden bg-gradient-to-b from-blue-50/40 via-white to-transparent">
+        <section
+            class="relative px-6 lg:px-16 py-20 lg:py-28 overflow-hidden bg-gradient-to-b from-blue-50/40 via-white to-transparent">
             <!-- Background grids/decorative shapes -->
             <div class="absolute inset-0 z-0 pointer-events-none opacity-40">
-                <div class="absolute top-10 left-10 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
-                <div class="absolute bottom-10 right-10 w-96 h-96 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style="animation-delay: 2s;"></div>
+                <div
+                    class="absolute top-10 left-10 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl animate-pulse">
+                </div>
+                <div class="absolute bottom-10 right-10 w-96 h-96 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"
+                    style="animation-delay: 2s;"></div>
             </div>
 
             <div class="relative z-10 max-w-5xl mx-auto text-center space-y-8">
-                <h1 class="text-4xl lg:text-6xl font-black text-gray-800 tracking-tight leading-tight max-w-4xl mx-auto">
+                <h1
+                    class="text-4xl lg:text-6xl font-black text-gray-800 tracking-tight leading-tight max-w-4xl mx-auto">
                     Hệ thống Quản lý Nhà nghỉ
                 </h1>
-                
+
                 <p class="text-lg text-gray-500 max-w-2xl mx-auto font-medium">
-                    Giải pháp tối ưu hóa vận hành nhà nghỉ. Theo dõi trạng thái phòng trực quan, tích hợp thanh toán minibar, giao ca trực chặt chẽ và tương thích mượt mà trên hệ điều hành Windows.
+                    Giải pháp tối ưu hóa vận hành nhà nghỉ. Theo dõi trạng thái phòng trực quan, tích hợp thanh toán
+                    minibar, giao ca trực chặt chẽ và tương thích mượt mà trên hệ điều hành Windows.
                 </p>
 
                 <div class="flex flex-wrap justify-center gap-4 pt-4">
-                    <button onclick="openAuthModal('login')" class="win-btn win-btn-primary px-8 py-3.5 text-base shadow-lg shadow-blue-200 flex items-center gap-2">
+                    <button onclick="openAuthModal('login')"
+                        class="win-btn win-btn-primary px-8 py-3.5 text-base shadow-lg shadow-blue-200 flex items-center gap-2">
                         Bắt đầu trải nghiệm <i data-lucide="arrow-right" class="w-5 h-5"></i>
                     </button>
-                    <a href="#features-section" class="win-btn win-btn-secondary px-8 py-3.5 text-base flex items-center gap-2">
+                    <a href="#features-section"
+                        class="win-btn win-btn-secondary px-8 py-3.5 text-base flex items-center gap-2">
                         Khám phá tính năng <i data-lucide="chevron-down" class="w-5 h-5"></i>
                     </a>
                 </div>
 
                 <!-- Preview Board -->
                 <div class="pt-12 max-w-4xl mx-auto animate-slide-in">
-                    <div class="fluent-card bg-white/80 backdrop-blur-md p-2 rounded-2xl shadow-2xl border border-gray-200">
+                    <div
+                        class="fluent-card bg-white/80 backdrop-blur-md p-2 rounded-2xl shadow-2xl border border-gray-200">
                         <div class="bg-gray-900 rounded-xl overflow-hidden shadow-inner border border-gray-800">
                             <!-- Windows Toolbar Mockup -->
-                            <div class="bg-gray-800 px-4 py-2 flex items-center justify-between border-b border-gray-700/50">
+                            <div
+                                class="bg-gray-800 px-4 py-2 flex items-center justify-between border-b border-gray-700/50">
                                 <div class="flex gap-1.5">
                                     <span class="w-3 h-3 rounded-full bg-red-500"></span>
                                     <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
                                     <span class="w-3 h-3 rounded-full bg-green-500"></span>
                                 </div>
-                                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Hotel Pro - Sơ đồ phòng trực quan</span>
+                                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Hotel Pro -
+                                    Sơ đồ phòng trực quan</span>
                                 <div class="w-4"></div>
                             </div>
                             <!-- Mock Content -->
                             <div class="p-6 bg-[#f4f6f9] text-left text-gray-800 grid grid-cols-2 md:grid-cols-4 gap-4">
-                                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between h-28 border-l-4 border-l-green-500">
+                                <div
+                                    class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between h-28 border-l-4 border-l-green-500">
                                     <div class="flex justify-between items-center">
                                         <span class="text-sm font-bold text-gray-800">Phòng 101</span>
-                                        <span class="px-2 py-0.5 bg-green-50 text-[10px] font-extrabold text-green-600 rounded">TRỐNG</span>
+                                        <span
+                                            class="px-2 py-0.5 bg-green-50 text-[10px] font-extrabold text-green-600 rounded">TRỐNG</span>
                                     </div>
                                     <span class="text-xs text-gray-400">STANDARD - 60.000đ/h</span>
                                 </div>
-                                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between h-28 border-l-4 border-l-red-500">
+                                <div
+                                    class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between h-28 border-l-4 border-l-red-500">
                                     <div class="flex justify-between items-center">
                                         <span class="text-sm font-bold text-gray-800">Phòng 102</span>
-                                        <span class="px-2 py-0.5 bg-red-50 text-[10px] font-extrabold text-red-600 rounded">ĐANG Ở</span>
+                                        <span
+                                            class="px-2 py-0.5 bg-red-50 text-[10px] font-extrabold text-red-600 rounded">ĐANG
+                                            Ở</span>
                                     </div>
                                     <span class="text-xs text-gray-400">STANDARD - 60.000đ/h</span>
                                 </div>
-                                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between h-28 border-l-4 border-l-amber-500">
+                                <div
+                                    class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between h-28 border-l-4 border-l-amber-500">
                                     <div class="flex justify-between items-center">
                                         <span class="text-sm font-bold text-gray-800">Phòng 201</span>
-                                        <span class="px-2 py-0.5 bg-amber-50 text-[10px] font-extrabold text-amber-600 rounded">DỌN PHÒNG</span>
+                                        <span
+                                            class="px-2 py-0.5 bg-amber-50 text-[10px] font-extrabold text-amber-600 rounded">DỌN
+                                            PHÒNG</span>
                                     </div>
                                     <span class="text-xs text-gray-400">VIP - 100.000đ/h</span>
                                 </div>
-                                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between h-28 border-l-4 border-l-green-500">
+                                <div
+                                    class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between h-28 border-l-4 border-l-green-500">
                                     <div class="flex justify-between items-center">
                                         <span class="text-sm font-bold text-gray-800">Phòng 202</span>
-                                        <span class="px-2 py-0.5 bg-green-50 text-[10px] font-extrabold text-green-600 rounded">TRỐNG</span>
+                                        <span
+                                            class="px-2 py-0.5 bg-green-50 text-[10px] font-extrabold text-green-600 rounded">TRỐNG</span>
                                     </div>
                                     <span class="text-xs text-gray-400">VIP - 100.000đ/h</span>
                                 </div>
@@ -169,9 +192,10 @@
             <div class="max-w-5xl mx-auto space-y-12">
                 <div class="text-center space-y-4">
                     <h2 class="text-3xl font-black text-gray-800 tracking-tight">Tính Năng Ưu Việt</h2>
-                    <p class="text-sm text-gray-400 uppercase tracking-widest font-bold">Giải pháp vận hành khép kín, tiện lợi và chính xác</p>
+                    <p class="text-sm text-gray-400 uppercase tracking-widest font-bold">Giải pháp vận hành khép kín,
+                        tiện lợi và chính xác</p>
                 </div>
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <!-- Feature 1 -->
                     <div class="fluent-card bg-white p-6 flex flex-col gap-4 border border-gray-100">
@@ -180,7 +204,8 @@
                         </div>
                         <h3 class="text-lg font-bold text-gray-800">Sơ đồ trực quan</h3>
                         <p class="text-xs text-gray-500 leading-relaxed">
-                            Quản lý toàn bộ phòng ốc dưới dạng lưới, theo dõi trạng thái trống, có khách hoặc đang dọn dẹp theo thời gian thực một cách dễ dàng.
+                            Quản lý toàn bộ phòng ốc dưới dạng lưới, theo dõi trạng thái trống, có khách hoặc đang dọn
+                            dẹp theo thời gian thực một cách dễ dàng.
                         </p>
                     </div>
 
@@ -191,7 +216,8 @@
                         </div>
                         <h3 class="text-lg font-bold text-gray-800">Tích hợp Minibar</h3>
                         <p class="text-xs text-gray-500 leading-relaxed">
-                            Thêm dịch vụ đồ uống, đồ ăn nhanh trực tiếp vào hóa đơn phòng. Tự động kiểm tra và khấu trừ số lượng sản phẩm tồn kho tức thời.
+                            Thêm dịch vụ đồ uống, đồ ăn nhanh trực tiếp vào hóa đơn phòng. Tự động kiểm tra và khấu trừ
+                            số lượng sản phẩm tồn kho tức thời.
                         </p>
                     </div>
 
@@ -202,7 +228,8 @@
                         </div>
                         <h3 class="text-lg font-bold text-gray-800">Giao ca chặt chẽ</h3>
                         <p class="text-xs text-gray-500 leading-relaxed">
-                            Tự động tính tiền mặt và chuyển khoản đã thu được trong phiên trực của nhân viên. Bàn giao ca minh bạch, tránh thất thoát doanh số.
+                            Tự động tính tiền mặt và chuyển khoản đã thu được trong phiên trực của nhân viên. Bàn giao
+                            ca minh bạch, tránh thất thoát doanh số.
                         </p>
                     </div>
 
@@ -213,7 +240,8 @@
                         </div>
                         <h3 class="text-lg font-bold text-gray-800">Báo cáo doanh thu</h3>
                         <p class="text-xs text-gray-500 leading-relaxed">
-                            Trực quan hóa doanh số 7 ngày gần nhất bằng biểu đồ trực quan, phân tích nguồn thu chi tiết giữa tiền dịch vụ và tiền thuê phòng.
+                            Trực quan hóa doanh số 7 ngày gần nhất bằng biểu đồ trực quan, phân tích nguồn thu chi tiết
+                            giữa tiền dịch vụ và tiền thuê phòng.
                         </p>
                     </div>
                 </div>
@@ -224,13 +252,18 @@
         <section id="about-section" class="px-6 lg:px-16 py-20 bg-white">
             <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div class="space-y-6">
-                    <div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg w-fit text-xs font-bold border border-indigo-100 uppercase tracking-widest">Về chúng tôi</div>
-                    <h2 class="text-3xl font-black text-gray-800 tracking-tight leading-tight">Giải Pháp Quản Lý Nhà Nghỉ</h2>
+                    <div
+                        class="p-2 bg-indigo-50 text-indigo-600 rounded-lg w-fit text-xs font-bold border border-indigo-100 uppercase tracking-widest">
+                        Về chúng tôi</div>
+                    <h2 class="text-3xl font-black text-gray-800 tracking-tight leading-tight">Giải Pháp Quản Lý Nhà
+                        Nghỉ</h2>
                     <p class="text-sm text-gray-500 leading-relaxed font-medium">
-                        Chúng tôi tự hào là đơn vị tiên phong mang tới giải pháp phần mềm chuyên sâu giúp các cơ sở lưu trú tối ưu hóa 100% thời gian vận hành và nâng cao chất lượng dịch vụ phục vụ khách hàng. 
+                        Chúng tôi tự hào là đơn vị tiên phong mang tới giải pháp phần mềm chuyên sâu giúp các cơ sở lưu
+                        trú tối ưu hóa 100% thời gian vận hành và nâng cao chất lượng dịch vụ phục vụ khách hàng.
                     </p>
                     <p class="text-sm text-gray-500 leading-relaxed font-medium">
-                        Với tiêu chí đơn giản - chính xác - mượt mà, hệ thống tương thích tốt với mọi thiết bị màn hình cũng như hỗ trợ chế độ tương thích hệ điều hành Windows mượt mà nhất.
+                        Với tiêu chí đơn giản - chính xác - mượt mà, hệ thống tương thích tốt với mọi thiết bị màn hình
+                        cũng như hỗ trợ chế độ tương thích hệ điều hành Windows mượt mà nhất.
                     </p>
                     <div class="grid grid-cols-2 gap-6 pt-4">
                         <div class="border-l-4 border-blue-500 pl-4">
@@ -244,18 +277,23 @@
                     </div>
                 </div>
                 <div class="relative">
-                    <div class="fluent-card p-6 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl shadow-xl text-white space-y-6">
+                    <div
+                        class="fluent-card p-6 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl shadow-xl text-white space-y-6">
                         <div class="flex items-center gap-3">
                             <i data-lucide="check-circle" class="w-8 h-8"></i>
                             <h3 class="text-xl font-bold">Cam kết chất lượng</h3>
                         </div>
                         <p class="text-sm text-white/80 leading-relaxed">
-                            Hỗ trợ tối ưu hóa quy trình nhập liệu khách hàng, tự động kiểm tra định dạng thẻ CCCD, kiểm tra độ tuổi trên 18 và đồng bộ dữ liệu bảo mật an toàn tuyệt đối.
+                            Hỗ trợ tối ưu hóa quy trình nhập liệu khách hàng, tự động kiểm tra định dạng thẻ CCCD, kiểm
+                            tra độ tuổi trên 18 và đồng bộ dữ liệu bảo mật an toàn tuyệt đối.
                         </p>
                         <ul class="space-y-2 text-xs font-semibold text-white/90">
-                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4"></i> Hỗ trợ kỹ thuật 24/7</li>
-                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4"></i> Sao lưu cơ sở dữ liệu định kỳ</li>
-                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4"></i> Tương thích tốt với máy in hóa đơn</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4"></i> Hỗ trợ kỹ
+                                thuật 24/7</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4"></i> Sao lưu cơ
+                                sở dữ liệu định kỳ</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4"></i> Tương thích
+                                tốt với máy in hóa đơn</li>
                         </ul>
                     </div>
                 </div>
@@ -267,40 +305,47 @@
             <div class="max-w-5xl mx-auto space-y-12">
                 <div class="text-center space-y-4">
                     <h2 class="text-3xl font-black text-gray-800 tracking-tight">Thông Tin Liên Hệ</h2>
-                    <p class="text-sm text-gray-400 uppercase tracking-widest font-bold">Kết nối với chúng tôi bất cứ khi nào bạn cần hỗ trợ</p>
+                    <p class="text-sm text-gray-400 uppercase tracking-widest font-bold">Kết nối với chúng tôi bất cứ
+                        khi nào bạn cần hỗ trợ</p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <!-- Address Card -->
-                    <div class="fluent-card bg-white p-6 flex flex-col items-center text-center gap-4 border border-gray-100 shadow-sm">
+                    <div
+                        class="fluent-card bg-white p-6 flex flex-col items-center text-center gap-4 border border-gray-100 shadow-sm">
                         <div class="p-4 bg-blue-50 text-blue-600 rounded-full shadow-inner">
                             <i data-lucide="map-pin" class="w-6 h-6"></i>
                         </div>
                         <div>
                             <h4 class="text-base font-bold text-gray-800 uppercase tracking-wide">Địa chỉ</h4>
-                            <p class="text-sm text-gray-500 mt-2 leading-relaxed">Khu phố 6, P. Linh Trung, Tp. Thủ Đức, Tp. Hồ Chí Minh</p>
+                            <p class="text-sm text-gray-500 mt-2 leading-relaxed">Khu phố 6, P. Linh Trung, Tp. Thủ Đức,
+                                Tp. Hồ Chí Minh</p>
                         </div>
                     </div>
 
                     <!-- Hotline Card -->
-                    <div class="fluent-card bg-white p-6 flex flex-col items-center text-center gap-4 border border-gray-100 shadow-sm">
+                    <div
+                        class="fluent-card bg-white p-6 flex flex-col items-center text-center gap-4 border border-gray-100 shadow-sm">
                         <div class="p-4 bg-indigo-50 text-indigo-600 rounded-full shadow-inner">
                             <i data-lucide="phone" class="w-6 h-6"></i>
                         </div>
                         <div>
                             <h4 class="text-base font-bold text-gray-800 uppercase tracking-wide">Hotline</h4>
-                            <p class="text-sm text-gray-500 mt-2 hover:text-indigo-600 transition-colors font-bold">+84 28 372 52002</p>
+                            <p class="text-sm text-gray-500 mt-2 hover:text-indigo-600 transition-colors font-bold">+84
+                                28 372 52002</p>
                         </div>
                     </div>
 
                     <!-- Email Card -->
-                    <div class="fluent-card bg-white p-6 flex flex-col items-center text-center gap-4 border border-gray-100 shadow-sm">
+                    <div
+                        class="fluent-card bg-white p-6 flex flex-col items-center text-center gap-4 border border-gray-100 shadow-sm">
                         <div class="p-4 bg-green-50 text-green-600 rounded-full shadow-inner">
                             <i data-lucide="mail" class="w-6 h-6"></i>
                         </div>
                         <div>
                             <h4 class="text-base font-bold text-gray-800 uppercase tracking-wide">Email</h4>
-                            <p class="text-sm text-gray-500 mt-2 hover:text-green-600 transition-colors font-bold">support@hotelpro.vn</p>
+                            <p class="text-sm text-gray-500 mt-2 hover:text-green-600 transition-colors font-bold">
+                                support@hotelpro.vn</p>
                         </div>
                     </div>
                 </div>
@@ -317,16 +362,18 @@
                     <span class="text-base font-bold tracking-tight">Hotel Pro</span>
                 </div>
                 <p class="text-xs text-gray-500">
-                    &copy; 2026 Nhóm 2 - SE104.Q29 - UIT. Bảo lưu mọi quyền.
+                    &copy; 2026 Nhóm 2 - SE104.Q29 - UIT.
                 </p>
             </div>
         </footer>
 
         <!-- Modal Auth Container (Login / Register popups) -->
-        <div id="auth-modal-backdrop" class="hidden fixed inset-0 z-[10000] flex items-center justify-center bg-black/40 backdrop-blur-sm">
+        <div id="auth-modal-backdrop"
+            class="hidden fixed inset-0 z-[10000] flex items-center justify-center bg-black/40 backdrop-blur-sm">
             <!-- Login Form -->
             <div id="login-form" class="auth-card animate-slide-in relative">
-                <button onclick="closeAuthModal()" class="absolute top-4 right-4 p-1.5 hover:bg-gray-100 rounded-full transition-colors">
+                <button onclick="closeAuthModal()"
+                    class="absolute top-4 right-4 p-1.5 hover:bg-gray-100 rounded-full transition-colors">
                     <i data-lucide="x" class="w-5 h-5 text-gray-400"></i>
                 </button>
                 <div class="flex flex-col items-center mb-10">
@@ -338,28 +385,33 @@
                 </div>
                 <div class="space-y-4">
                     <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Tên đăng nhập</label>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Tên đăng
+                            nhập</label>
                         <input type="text" id="login-user"
                             class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                             placeholder="admin hoặc staff">
                     </div>
                     <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Mật khẩu</label>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Mật
+                            khẩu</label>
                         <input type="password" id="login-pass"
                             class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                             placeholder="••••••••">
                     </div>
                     <button onclick="handleLogin()"
-                        class="w-full py-4 bg-blue-600 text-white rounded-lg font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all mt-4">Đăng nhập</button>
+                        class="w-full py-4 bg-blue-600 text-white rounded-lg font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all mt-4">Đăng
+                        nhập</button>
                 </div>
                 <div class="mt-6 text-center">
-                    <button onclick="toggleAuth('register')" class="text-xs font-bold text-blue-600 hover:underline">Chưa có tài khoản? Đăng ký ngay</button>
+                    <button onclick="toggleAuth('register')"
+                        class="text-xs font-bold text-blue-600 hover:underline">Chưa có tài khoản? Đăng ký ngay</button>
                 </div>
             </div>
 
             <!-- Register Form -->
             <div id="register-form" class="auth-card animate-slide-in hidden-section relative">
-                <button onclick="closeAuthModal()" class="absolute top-4 right-4 p-1.5 hover:bg-gray-100 rounded-full transition-colors">
+                <button onclick="closeAuthModal()"
+                    class="absolute top-4 right-4 p-1.5 hover:bg-gray-100 rounded-full transition-colors">
                     <i data-lucide="x" class="w-5 h-5 text-gray-400"></i>
                 </button>
                 <div class="flex flex-col items-center mb-10">
@@ -371,23 +423,27 @@
                 </div>
                 <div class="space-y-4">
                     <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Tên đăng nhập</label>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Tên đăng
+                            nhập</label>
                         <input type="text" id="reg-user"
                             class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
                     </div>
                     <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Mật khẩu</label>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Mật
+                            khẩu</label>
                         <input type="password" id="reg-pass"
                             class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
                     </div>
                     <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Xác nhận mật khẩu</label>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Xác nhận
+                            mật khẩu</label>
                         <input type="password" id="reg-pass-confirm"
                             class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
                             placeholder="Nhập lại mật khẩu">
                     </div>
                     <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Chức vụ</label>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">Chức
+                            vụ</label>
                         <select id="reg-role"
                             class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
                             <option value="RECEPTIONIST">Lễ tân</option>
@@ -397,10 +453,12 @@
                         </select>
                     </div>
                     <button onclick="handleRegister()"
-                        class="w-full py-4 bg-indigo-600 text-white rounded-lg font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition-all mt-4">Đăng ký tài khoản</button>
+                        class="w-full py-4 bg-indigo-600 text-white rounded-lg font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition-all mt-4">Đăng
+                        ký tài khoản</button>
                 </div>
                 <div class="mt-6 text-center">
-                    <button onclick="toggleAuth('login')" class="text-xs font-bold text-indigo-600 hover:underline">Đã có tài khoản? Đăng nhập</button>
+                    <button onclick="toggleAuth('login')" class="text-xs font-bold text-indigo-600 hover:underline">Đã
+                        có tài khoản? Đăng nhập</button>
                 </div>
             </div>
         </div>
@@ -613,7 +671,8 @@
             <div class="flex-1 p-10 bg-[#fbfbfb] overflow-y-auto">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
                     <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
-                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Tổng doanh thu</p>
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Tổng doanh thu
+                        </p>
                         <h3 id="stat-total-revenue" class="text-3xl font-black text-blue-600">0đ</h3>
                     </div>
                     <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
@@ -629,19 +688,22 @@
                 <!-- Biểu đồ -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div class="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm col-span-1 lg:col-span-2">
-                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6">Doanh thu 7 ngày gần nhất</p>
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6">Doanh thu 7 ngày
+                            gần nhất</p>
                         <div class="h-80">
                             <canvas id="revenue-chart"></canvas>
                         </div>
                     </div>
                     <div class="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm">
-                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6">Cơ cấu doanh thu</p>
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6">Cơ cấu doanh thu
+                        </p>
                         <div class="h-64 flex justify-center">
                             <canvas id="category-chart"></canvas>
                         </div>
                     </div>
                     <div class="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm">
-                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6">Hình thức thanh toán</p>
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6">Hình thức thanh
+                            toán</p>
                         <div class="h-64 flex justify-center">
                             <canvas id="payment-chart"></canvas>
                         </div>
@@ -707,29 +769,40 @@
                         data-lucide="rotate-cw" class="w-5 h-5"></i></button>
             </header>
             <div class="flex-1 p-8 bg-[#fbfbfb] overflow-hidden flex flex-col h-full">
-                <div class="flex-1 bg-white rounded-3xl border border-gray-200 shadow-sm flex flex-col overflow-hidden h-full">
+                <div
+                    class="flex-1 bg-white rounded-3xl border border-gray-200 shadow-sm flex flex-col overflow-hidden h-full">
                     <!-- Top Bar with Info Inputs -->
                     <div class="px-6 py-4 border-b bg-gray-50 flex flex-wrap items-center justify-between gap-4">
                         <div class="flex items-center gap-3">
-                            <span class="text-xs font-bold text-gray-600 uppercase tracking-wider">Thông tin liên hệ:</span>
-                            <input type="text" id="guest-chat-name" placeholder="Họ và tên" class="px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-blue-500 w-44 font-semibold text-gray-700" />
-                            <input type="text" id="guest-chat-phone" placeholder="Số điện thoại *" class="px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-blue-500 w-44 font-semibold text-gray-700" />
+                            <span class="text-xs font-bold text-gray-600 uppercase tracking-wider">Thông tin liên
+                                hệ:</span>
+                            <input type="text" id="guest-chat-name" placeholder="Họ và tên"
+                                class="px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-blue-500 w-44 font-semibold text-gray-700" />
+                            <input type="text" id="guest-chat-phone" placeholder="Số điện thoại *"
+                                class="px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-blue-500 w-44 font-semibold text-gray-700" />
                         </div>
                         <div class="flex items-center gap-3">
-                            <span class="px-2.5 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase">Trực tuyến</span>
-                            <span class="px-2.5 py-1 bg-gray-100 text-gray-600 rounded-full text-[10px] font-bold" id="guest-chat-username-badge">guest</span>
+                            <span
+                                class="px-2.5 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase">Trực
+                                tuyến</span>
+                            <span class="px-2.5 py-1 bg-gray-100 text-gray-600 rounded-full text-[10px] font-bold"
+                                id="guest-chat-username-badge">guest</span>
                         </div>
                     </div>
 
                     <!-- Chat History -->
-                    <div id="guest-chat-history" class="flex-1 p-6 overflow-y-auto space-y-4 bg-gray-50/50 flex flex-col min-h-0">
+                    <div id="guest-chat-history"
+                        class="flex-1 p-6 overflow-y-auto space-y-4 bg-gray-50/50 flex flex-col min-h-0">
                         <!-- Messages will load here -->
                     </div>
 
                     <!-- Bottom Reply Bar -->
                     <div class="p-4 border-t bg-white flex gap-3 items-center">
-                        <input type="text" id="guest-chat-message-input" placeholder="Nhập tin nhắn gửi đến Lễ tân..." onkeydown="if(event.key === 'Enter') window.sendGuestChatMessage()" class="flex-1 px-4 py-3 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-sm">
-                        <button onclick="window.sendGuestChatMessage()" class="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-md hover:bg-blue-700 transition-all flex items-center gap-2">
+                        <input type="text" id="guest-chat-message-input" placeholder="Nhập tin nhắn gửi đến Lễ tân..."
+                            onkeydown="if(event.key === 'Enter') window.sendGuestChatMessage()"
+                            class="flex-1 px-4 py-3 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                        <button onclick="window.sendGuestChatMessage()"
+                            class="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-md hover:bg-blue-700 transition-all flex items-center gap-2">
                             <i data-lucide="send" class="w-4 h-4"></i> Gửi
                         </button>
                     </div>
@@ -741,7 +814,8 @@
         <div id="section-receptionist-chat" class="flex-1 flex flex-col overflow-hidden hidden-section">
             <header class="h-20 mica-effect border-b border-gray-200 flex items-center justify-between px-10">
                 <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
-                    <i data-lucide="message-square" class="w-6 h-6 text-indigo-600"></i> Quản lý tin nhắn tư vấn từ khách hàng
+                    <i data-lucide="message-square" class="w-6 h-6 text-indigo-600"></i> Quản lý tin nhắn tư vấn từ
+                    khách hàng
                 </h2>
                 <button onclick="window.loadReceptionistThreads()"
                     class="p-2.5 bg-indigo-50 text-indigo-600 rounded-full hover:bg-indigo-600 hover:text-white transition-all shadow-sm"><i
@@ -749,7 +823,8 @@
             </header>
             <div class="flex-1 p-8 bg-[#fbfbfb] overflow-hidden flex gap-8 h-full">
                 <!-- Left: Active Chat threads -->
-                <div class="w-96 bg-white rounded-3xl border border-gray-200 overflow-hidden shadow-sm flex flex-col h-full">
+                <div
+                    class="w-96 bg-white rounded-3xl border border-gray-200 overflow-hidden shadow-sm flex flex-col h-full">
                     <div class="p-5 border-b bg-gray-50">
                         <h3 class="text-xs font-bold text-gray-600 uppercase tracking-wider">Luồng hội thoại</h3>
                     </div>
@@ -759,14 +834,17 @@
                 </div>
 
                 <!-- Right: Active conversation -->
-                <div id="receptionist-active-chat" class="flex-1 bg-white rounded-3xl border border-gray-200 shadow-sm flex flex-col overflow-hidden h-full">
+                <div id="receptionist-active-chat"
+                    class="flex-1 bg-white rounded-3xl border border-gray-200 shadow-sm flex flex-col overflow-hidden h-full">
                     <!-- Default State -->
-                    <div id="receptionist-chat-placeholder" class="flex-1 flex flex-col items-center justify-center text-center p-10 space-y-4">
+                    <div id="receptionist-chat-placeholder"
+                        class="flex-1 flex flex-col items-center justify-center text-center p-10 space-y-4">
                         <div class="p-6 bg-indigo-50 text-indigo-600 rounded-full">
                             <i data-lucide="message-circle" class="w-12 h-12 animate-bounce"></i>
                         </div>
                         <h3 class="text-lg font-bold text-gray-700">Chưa chọn cuộc hội thoại</h3>
-                        <p class="text-sm text-gray-400 max-w-sm">Chọn một khách hàng ở danh sách bên trái để xem nội dung tư vấn và trả lời.</p>
+                        <p class="text-sm text-gray-400 max-w-sm">Chọn một khách hàng ở danh sách bên trái để xem nội
+                            dung tư vấn và trả lời.</p>
                     </div>
 
                     <!-- Chat Window (Hidden by default) -->
@@ -776,14 +854,19 @@
                                 <h4 id="active-chat-guest-name" class="text-sm font-bold text-gray-800">Khách hàng</h4>
                                 <p id="active-chat-guest-phone" class="text-[10px] text-gray-400 mt-0.5">SĐT: --</p>
                             </div>
-                            <span class="px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black uppercase" id="active-chat-guest-username">guest</span>
+                            <span
+                                class="px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black uppercase"
+                                id="active-chat-guest-username">guest</span>
                         </div>
-                        <div id="receptionist-chat-history" class="flex-1 p-6 overflow-y-auto space-y-4 bg-gray-50/50 flex flex-col min-h-0">
+                        <div id="receptionist-chat-history"
+                            class="flex-1 p-6 overflow-y-auto space-y-4 bg-gray-50/50 flex flex-col min-h-0">
                             <!-- Selected thread messages -->
                         </div>
                         <div class="p-4 border-t bg-white flex gap-3 items-center">
-                            <input type="text" id="receptionist-reply-input" placeholder="Nhập câu trả lời tư vấn..." class="flex-1 px-4 py-3 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
-                            <button onclick="window.sendReceptionistReply()" class="px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold shadow-md hover:bg-indigo-700 transition-all flex items-center gap-2">
+                            <input type="text" id="receptionist-reply-input" placeholder="Nhập câu trả lời tư vấn..."
+                                class="flex-1 px-4 py-3 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                            <button onclick="window.sendReceptionistReply()"
+                                class="px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold shadow-md hover:bg-indigo-700 transition-all flex items-center gap-2">
                                 <i data-lucide="send" class="w-4 h-4"></i> Gửi
                             </button>
                         </div>
@@ -824,11 +907,11 @@
                         <option value="DAILY">Thuê theo ngày</option>
                     </select></div>
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-1"><label class="text-[10px] font-bold text-gray-500 uppercase">Ngày nhận phòng</label><input
-                            type="date" id="checkin-date"
+                    <div class="space-y-1"><label class="text-[10px] font-bold text-gray-500 uppercase">Ngày nhận
+                            phòng</label><input type="date" id="checkin-date"
                             class="w-full px-4 py-2.5 bg-gray-50 border rounded-lg outline-none"></div>
-                    <div class="space-y-1"><label class="text-[10px] font-bold text-gray-500 uppercase">Giờ nhận phòng</label><input
-                            type="time" id="checkin-time"
+                    <div class="space-y-1"><label class="text-[10px] font-bold text-gray-500 uppercase">Giờ nhận
+                            phòng</label><input type="time" id="checkin-time"
                             class="w-full px-4 py-2.5 bg-gray-50 border rounded-lg outline-none"></div>
                 </div>
             </div>
@@ -961,17 +1044,21 @@
                 <div id="bill-content">
                     <!-- Bill details will be loaded here -->
                 </div>
-                
+
                 <div id="payment-method-container" class="space-y-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
                     <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Phương thức thanh toán</p>
                     <div class="flex gap-6">
                         <label class="flex items-center gap-2 cursor-pointer group">
                             <input type="radio" name="pay-method" value="CASH" checked class="w-4 h-4 text-blue-600">
-                            <span class="text-sm font-bold text-gray-700 group-hover:text-blue-600 transition-colors">Tiền mặt</span>
+                            <span
+                                class="text-sm font-bold text-gray-700 group-hover:text-blue-600 transition-colors">Tiền
+                                mặt</span>
                         </label>
                         <label class="flex items-center gap-2 cursor-pointer group">
                             <input type="radio" name="pay-method" value="TRANSFER" class="w-4 h-4 text-blue-600">
-                            <span class="text-sm font-bold text-gray-700 group-hover:text-blue-600 transition-colors">Chuyển khoản</span>
+                            <span
+                                class="text-sm font-bold text-gray-700 group-hover:text-blue-600 transition-colors">Chuyển
+                                khoản</span>
                         </label>
                     </div>
                 </div>
@@ -989,7 +1076,8 @@
     <!-- Modal Xem Phòng -->
     <div id="view-room-modal"
         class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden border border-gray-200 animate-slide-in">
+        <div
+            class="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden border border-gray-200 animate-slide-in">
             <div class="p-6 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
                 <h3 class="font-bold text-gray-800 flex items-center gap-2">
                     <i data-lucide="image" class="w-5 h-5 text-blue-600"></i>
@@ -1002,12 +1090,17 @@
             <div class="p-6 flex flex-col items-center justify-center space-y-4">
                 <!-- Large Image Display -->
                 <div class="w-full relative overflow-hidden rounded-xl shadow-md border bg-gray-50">
-                    <img id="view-room-img" class="w-full h-64 object-cover transition-opacity duration-300" src="" alt="Hình ảnh phòng">
+                    <img id="view-room-img" class="w-full h-64 object-cover transition-opacity duration-300" src=""
+                        alt="Hình ảnh phòng">
                 </div>
                 <!-- Thumbnails container -->
                 <div id="view-room-thumbnails" class="flex gap-3 justify-center w-full mt-2">
-                    <img onclick="switchMainImage(this)" class="w-16 h-12 object-cover rounded-lg border-2 border-blue-600 cursor-pointer hover:opacity-85 transition-all thumbnail-item" src="" alt="Hình 1">
-                    <img onclick="switchMainImage(this)" class="w-16 h-12 object-cover rounded-lg border-2 border-transparent cursor-pointer hover:opacity-85 transition-all thumbnail-item" src="" alt="Hình 2">
+                    <img onclick="switchMainImage(this)"
+                        class="w-16 h-12 object-cover rounded-lg border-2 border-blue-600 cursor-pointer hover:opacity-85 transition-all thumbnail-item"
+                        src="" alt="Hình 1">
+                    <img onclick="switchMainImage(this)"
+                        class="w-16 h-12 object-cover rounded-lg border-2 border-transparent cursor-pointer hover:opacity-85 transition-all thumbnail-item"
+                        src="" alt="Hình 2">
                 </div>
                 <div class="w-full bg-blue-50/50 p-4 rounded-xl border border-blue-100/50 text-center">
                     <p id="view-room-desc" class="text-sm text-gray-700 font-bold"></p>
@@ -1015,7 +1108,8 @@
                 </div>
             </div>
             <div class="p-6 bg-gray-50 border-t border-gray-200 flex justify-end">
-                <button onclick="closeViewRoomModal()" class="win-btn win-btn-primary bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2.5 rounded-lg shadow-lg shadow-blue-200 transition-all">Đóng</button>
+                <button onclick="closeViewRoomModal()"
+                    class="win-btn win-btn-primary bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2.5 rounded-lg shadow-lg shadow-blue-200 transition-all">Đóng</button>
             </div>
         </div>
     </div>
@@ -1023,7 +1117,8 @@
     <!-- Modal Cập nhật hình ảnh phòng (Admin) -->
     <div id="upload-images-modal"
         class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-200 animate-slide-in">
+        <div
+            class="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-200 animate-slide-in">
             <div class="p-6 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
                 <h3 class="font-bold text-gray-800 flex items-center gap-2">
                     <i data-lucide="upload-cloud" class="w-5 h-5 text-indigo-600"></i>
@@ -1035,21 +1130,25 @@
             </div>
             <form id="upload-images-form" onsubmit="handleImagesUpload(event)" class="p-8 space-y-6">
                 <input type="hidden" id="upload-room-id">
-                
+
                 <div class="space-y-4">
                     <div class="space-y-1">
                         <label class="text-[10px] font-bold text-gray-500 uppercase">Hình ảnh 1 (Ảnh chính)</label>
-                        <input type="file" id="upload-img-1" accept="image/*" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100">
+                        <input type="file" id="upload-img-1" accept="image/*"
+                            class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100">
                     </div>
                     <div class="space-y-1">
                         <label class="text-[10px] font-bold text-gray-500 uppercase">Hình ảnh 2</label>
-                        <input type="file" id="upload-img-2" accept="image/*" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100">
+                        <input type="file" id="upload-img-2" accept="image/*"
+                            class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100">
                     </div>
                 </div>
-                
+
                 <div class="pt-4 border-t flex justify-end gap-3">
                     <button type="button" onclick="closeUploadModal()" class="win-btn win-btn-secondary">Hủy</button>
-                    <button type="submit" class="win-btn win-btn-primary bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-100">Cập nhật ảnh</button>
+                    <button type="submit"
+                        class="win-btn win-btn-primary bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-100">Cập
+                        nhật ảnh</button>
                 </div>
             </form>
         </div>
