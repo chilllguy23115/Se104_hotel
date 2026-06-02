@@ -40,23 +40,36 @@
 
 ### HƯỚNG DẪN CHẠY DEMO
 
-#### 1. Yêu cầu hệ thống
+Bạn có thể trải nghiệm ứng dụng bằng một trong hai cách dưới đây:
+
+---
+
+#### CÁCH 1: TRUY CẬP TRỰC TIẾP QUA LINK DEPLOY (RENDER)
+Ứng dụng đã được triển khai trực tuyến trên cloud Render. Bạn chỉ cần click vào liên kết dưới đây để truy cập ngay mà không cần cấu hình:
+
+* **Link trải nghiệm:** [https://se104-hotel.onrender.com](https://se104-hotel.onrender.com) *(Bạn có thể thay đổi liên kết này thành link Render của mình)*
+
+---
+
+#### CÁCH 2: KHỞI CHẠY TRÊN MÁY CỤC BỘ (LOCAL DEVELOPMENT)
+
+**1. Yêu cầu hệ thống:**
 Hãy đảm bảo máy tính của bạn đã cài đặt **Python (phiên bản 3.8 trở lên)**.
 
-#### 2. Cài đặt thư viện
+**2. Cài đặt thư viện:**
 Mở terminal tại thư mục gốc của dự án và chạy lệnh sau để cài đặt các thư viện cần thiết:
 ```bash
 pip install -r requirements.txt
 ```
 
-#### 3. Khởi chạy Backend Server
+**3. Khởi chạy Backend Server:**
 Chạy lệnh khởi động máy chủ FastAPI/Uvicorn:
 ```bash
 python backend/main.py
 ```
 Máy chủ sẽ được khởi động tại địa chỉ: `http://127.0.0.1:8000`
 
-#### 4. Trải nghiệm Ứng dụng
+**4. Trải nghiệm Ứng dụng:**
 Hệ thống Frontend đã được tích hợp và mount tự động trong máy chủ FastAPI. Bạn chỉ cần mở trình duyệt web bất kỳ và truy cập vào đường dẫn:
 ```text
 http://127.0.0.1:8000
