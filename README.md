@@ -47,7 +47,7 @@ Bạn có thể trải nghiệm ứng dụng bằng một trong hai cách dướ
 #### CÁCH 1: TRUY CẬP TRỰC TIẾP QUA LINK DEPLOY (RENDER)
 Ứng dụng đã được triển khai trực tuyến trên cloud Render. Bạn chỉ cần click vào liên kết dưới đây để truy cập ngay mà không cần cấu hình:
 
-* **Link trải nghiệm:** [https://se104-hotel.onrender.com](https://se104-hotel.onrender.com)
+* **Link trải nghiệm:** [https://se104-hotel-3.onrender.com](https://se104-hotel-3.onrender.com)
 
 ---
 
