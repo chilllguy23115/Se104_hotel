@@ -388,6 +388,13 @@ class ChatMessageCreate(BaseModel):
 class ChatReplyCreate(BaseModel):
     message: str
 
+def make_aware(dt):
+    if dt is None:
+        return None
+    if dt.tzinfo is None:
+        return dt.astimezone()
+    return dt
+
 def get_db():
     db = SessionLocal()
     try:
@@ -550,7 +557,7 @@ def list_invoices(db: Session = Depends(get_db), role: str = Depends(check_admin
         "room_number": inv.room.room_number,
         "guest_name": inv.guest_name,
         "total_amount": inv.total_amount,
-        "check_out_time": inv.check_out_time,
+        "check_out_time": make_aware(inv.check_out_time),
         "payment_method": inv.payment_method,
         "username": inv.user.username if inv.user else "N/A"  # Kiểm tra nếu inv.user tồn tại
     } for inv in invoices]
@@ -561,8 +568,8 @@ def list_shifts(db: Session = Depends(get_db), role: str = Depends(check_admin_r
     return [{
         "id": s.id,
         "username": s.user.username,
-        "start_time": s.start_time,
-        "end_time": s.end_time,
+        "start_time": make_aware(s.start_time),
+        "end_time": make_aware(s.end_time),
         "total_cash": s.total_cash,
         "total_transfer": s.total_transfer,
         "status": s.status
@@ -647,7 +654,7 @@ def list_janitor_notifications(db: Session = Depends(get_db), role: str = Depend
         "room_number": n.room_number,
         "message": n.message,
         "is_read": n.is_read,
-        "created_at": n.created_at
+        "created_at": make_aware(n.created_at)
     } for n in notifs]
 
 @app.post("/api/janitor/notifications/{notif_id}/read", tags=["Thông báo - Janitor"])
@@ -709,7 +716,7 @@ def add_service_to_booking(booking_id: int, req: AddServiceRequest, db: Session 
     
     # Gửi thông báo minibar cho Janitor
     room_number = booking.room.room_number
-    notif_msg = f"Phòng {room_number} vừa đặt minibar: {req.quantity}x {service.name}"
+    notif_msg = f"Phòng {room_number}: {req.quantity}x {service.name}"
     db.add(MinibarNotification(room_number=room_number, message=notif_msg))
     
     db.commit()
@@ -742,7 +749,7 @@ def batch_add_services(booking_id: int, req: BatchServicesRequest, db: Session =
     
     if added_items:
         room_number = booking.room.room_number
-        notif_msg = f"Phòng {room_number} vừa đặt minibar: {', '.join(added_items)}"
+        notif_msg = f"Phòng {room_number}: {', '.join(added_items)}"
         db.add(MinibarNotification(room_number=room_number, message=notif_msg))
         
     db.commit()
@@ -772,8 +779,8 @@ def preview_bill(booking_id: int, db: Session = Depends(get_db)):
     service_charge = sum(s.quantity * s.price_at_time for s in services)
     
     return {
-        "booking_id": booking.id, "room_number": room.room_number, "check_in_time": booking.check_in_time,
-        "check_out_time": now, "hours_stayed": hours_stayed, "room_charge": room_charge,
+        "booking_id": booking.id, "room_number": room.room_number, "check_in_time": make_aware(booking.check_in_time),
+        "check_out_time": make_aware(now), "hours_stayed": hours_stayed, "room_charge": room_charge,
         "service_charge": service_charge, "total_amount": room_charge + service_charge,
         "service_details": service_details, "status": booking.status
     }
@@ -814,8 +821,8 @@ def check_out_room(booking_id: int, req: CheckoutRequest, db: Session = Depends(
     
     db.commit()
     return {
-        "booking_id": booking.id, "room_number": room.room_number, "check_in_time": booking.check_in_time,
-        "check_out_time": checkout_time, "hours_stayed": hours_stayed, "room_charge": room_charge,
+        "booking_id": booking.id, "room_number": room.room_number, "check_in_time": make_aware(booking.check_in_time),
+        "check_out_time": make_aware(checkout_time), "hours_stayed": hours_stayed, "room_charge": room_charge,
         "service_charge": service_charge, "total_amount": booking.total_amount,
         "payment_method": booking.payment_method,
         "service_details": service_details, "status": "COMPLETED"
@@ -838,7 +845,7 @@ def get_current_shift(user_id: int, db: Session = Depends(get_db)):
     total_transfer = sum(b.total_amount for b in bookings if b.payment_method == PaymentMethodEnum.TRANSFER)
     
     return {
-        "id": shift.id, "username": shift.user.username, "start_time": shift.start_time,
+        "id": shift.id, "username": shift.user.username, "start_time": make_aware(shift.start_time),
         "total_cash": total_cash, "total_transfer": total_transfer, "status": shift.status
     }
 
@@ -915,7 +922,7 @@ def guest_get_messages(
         "guest_name": m.guest_name,
         "phone_number": m.phone_number,
         "message": m.message,
-        "created_at": m.created_at
+        "created_at": make_aware(m.created_at)
     } for m in messages]
 
 @app.get("/api/chat/threads", tags=["Hỗ trợ & Chat"])
@@ -938,7 +945,7 @@ def list_chat_threads(
         "guest_name": t.guest_name,
         "phone_number": t.phone_number,
         "latest_message": t.message,
-        "created_at": t.created_at
+        "created_at": make_aware(t.created_at)
     } for t in threads]
 
 @app.get("/api/chat/thread/{guest_username}", tags=["Hỗ trợ & Chat"])
@@ -955,7 +962,7 @@ def get_chat_thread(
         "guest_name": m.guest_name,
         "phone_number": m.phone_number,
         "message": m.message,
-        "created_at": m.created_at
+        "created_at": make_aware(m.created_at)
     } for m in messages]
 
 @app.post("/api/chat/reply/{guest_username}", tags=["Hỗ trợ & Chat"])
