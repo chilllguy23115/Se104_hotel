@@ -941,4 +941,7 @@ FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
 app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    port = int(os.environ.get("PORT", 8000))
+    # Disable reload in production (when PORT env is set) to prevent overhead and watchfiles warnings on Render
+    reload_enabled = "PORT" not in os.environ
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=reload_enabled)
