@@ -25,8 +25,16 @@ import {
     sendGuestChatMessage, 
     loadReceptionistThreads, 
     selectChatThread, 
-    sendReceptionistReply 
+    sendReceptionistReply,
+    sendMenuToGuest
 } from './modules/chat.js';
+import { 
+    startJanitorNotificationPolling, 
+    toggleJanitorNotifications, 
+    markNotificationRead, 
+    markAllNotificationsRead 
+} from './modules/notifications.js';
+
 
 // Khởi tạo ứng dụng
 document.addEventListener('DOMContentLoaded', async () => {
@@ -37,6 +45,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             fetch(`${API_URL}/shifts/start/${currentUser.id}`, { method: 'POST' });
         }
         showSection('rooms', { rooms: fetchRooms });
+        startJanitorNotificationPolling();
     }
     lucide.createIcons();
 });
@@ -120,3 +129,10 @@ window.sendGuestChatMessage = sendGuestChatMessage;
 window.loadReceptionistThreads = loadReceptionistThreads;
 window.selectChatThread = selectChatThread;
 window.sendReceptionistReply = sendReceptionistReply;
+window.sendMenuToGuest = sendMenuToGuest;
+
+// Janitor Notifications exposure
+window.toggleJanitorNotifications = toggleJanitorNotifications;
+window.markNotificationRead = markNotificationRead;
+window.markAllNotificationsRead = markAllNotificationsRead;
+

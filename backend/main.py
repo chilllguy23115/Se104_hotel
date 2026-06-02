@@ -152,6 +152,15 @@ class ChatMessage(Base):
     message: Mapped[str] = mapped_column(String(500), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
+class MinibarNotification(Base):
+    __tablename__ = "minibar_notifications"
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    room_number: Mapped[str] = mapped_column(String(50), nullable=False)
+    message: Mapped[str] = mapped_column(String(255), nullable=False)
+    is_read: Mapped[bool] = mapped_column(default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
 # ==========================================
 # 3. INITIALIZATION & LIFESPAN
 # ==========================================
@@ -630,6 +639,32 @@ def finish_cleaning(room_id: int, db: Session = Depends(get_db), role: str = Dep
     db.commit()
     return {"message": "Phòng đã sẵn sàng đón khách"}
 
+@app.get("/api/janitor/notifications", tags=["Thông báo - Janitor"])
+def list_janitor_notifications(db: Session = Depends(get_db), role: str = Depends(check_janitor_role)):
+    notifs = db.query(MinibarNotification).filter(MinibarNotification.is_read == False).order_by(MinibarNotification.created_at.desc()).all()
+    return [{
+        "id": n.id,
+        "room_number": n.room_number,
+        "message": n.message,
+        "is_read": n.is_read,
+        "created_at": n.created_at
+    } for n in notifs]
+
+@app.post("/api/janitor/notifications/{notif_id}/read", tags=["Thông báo - Janitor"])
+def read_janitor_notification(notif_id: int, db: Session = Depends(get_db), role: str = Depends(check_janitor_role)):
+    notif = db.query(MinibarNotification).filter(MinibarNotification.id == notif_id).first()
+    if not notif:
+        raise HTTPException(status_code=404, detail="Không tìm thấy thông báo")
+    notif.is_read = True
+    db.commit()
+    return {"message": "Đã đọc thông báo"}
+
+@app.post("/api/janitor/notifications/read-all", tags=["Thông báo - Janitor"])
+def read_all_janitor_notifications(db: Session = Depends(get_db), role: str = Depends(check_janitor_role)):
+    db.query(MinibarNotification).filter(MinibarNotification.is_read == False).update({MinibarNotification.is_read: True}, synchronize_session=False)
+    db.commit()
+    return {"message": "Đã đọc tất cả thông báo"}
+
 @app.post("/api/bookings/check-in", tags=["Lễ tân - Nghiệp vụ"])
 def check_in_room(req: CheckInRequest, db: Session = Depends(get_db), role: str = Depends(check_not_guest)):
     room = db.query(Room).filter(Room.id == req.room_id).first()
@@ -671,6 +706,12 @@ def add_service_to_booking(booking_id: int, req: AddServiceRequest, db: Session 
     service.stock_quantity -= req.quantity
     
     db.add(BookingService(booking_id=booking.id, service_id=service.id, quantity=req.quantity, price_at_time=service.price))
+    
+    # Gửi thông báo minibar cho Janitor
+    room_number = booking.room.room_number
+    notif_msg = f"Phòng {room_number} vừa đặt minibar: {req.quantity}x {service.name}"
+    db.add(MinibarNotification(room_number=room_number, message=notif_msg))
+    
     db.commit()
     return {"message": "Thêm dịch vụ và trừ kho thành công"}
 
@@ -679,6 +720,7 @@ def batch_add_services(booking_id: int, req: BatchServicesRequest, db: Session =
     booking = db.query(Booking).filter(Booking.id == booking_id, Booking.status == BookingStatusEnum.ACTIVE).first()
     if not booking: raise HTTPException(status_code=404, detail="Hóa đơn không tồn tại")
     
+    added_items = []
     for item in req.services:
         service = db.query(Service).filter(Service.id == item.service_id).first()
         if not service: continue
@@ -696,7 +738,13 @@ def batch_add_services(booking_id: int, req: BatchServicesRequest, db: Session =
             quantity=item.quantity,
             price_at_time=service.price
         ))
+        added_items.append(f"{item.quantity}x {service.name}")
     
+    if added_items:
+        room_number = booking.room.room_number
+        notif_msg = f"Phòng {room_number} vừa đặt minibar: {', '.join(added_items)}"
+        db.add(MinibarNotification(room_number=room_number, message=notif_msg))
+        
     db.commit()
     return {"message": "Đã thêm các dịch vụ và cập nhật kho thành công"}
 

@@ -319,6 +319,46 @@ export async function sendReceptionistReply() {
     }
 }
 
+export async function sendMenuToGuest() {
+    if (!activeThreadUsername) return;
+
+    try {
+        const resServices = await fetch(`${API_URL}/services`);
+        if (!resServices.ok) {
+            alert("Không thể tải danh sách dịch vụ!");
+            return;
+        }
+        const services = await resServices.json();
+        if (services.length === 0) {
+            alert("Hiện tại nhà nghỉ chưa có dịch vụ nào trong menu!");
+            return;
+        }
+
+        let menuMessage = "📋 DANH SÁCH THỰC ĐƠN DỊCH VỤ:\n";
+        services.forEach(s => {
+            menuMessage += `• ${s.name}: ${s.price.toLocaleString('vi-VN')}đ\n`;
+        });
+        menuMessage = menuMessage.trim();
+
+        const res = await fetch(`${API_URL}/chat/reply/${activeThreadUsername}`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify({ message: menuMessage })
+        });
+
+        if (res.ok) {
+            await fetchAndRenderActiveThreadMessages();
+            loadReceptionistThreads();
+        } else {
+            const err = await res.json();
+            alert(err.detail || "Đã xảy ra lỗi khi gửi menu!");
+        }
+    } catch (e) {
+        console.error(e);
+        alert("Lỗi kết nối máy chủ khi gửi menu!");
+    }
+}
+
 // Helpers
 function escapeHtml(text) {
     if (!text) return '';
