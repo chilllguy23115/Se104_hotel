@@ -17,8 +17,9 @@ export async function fetchStaff() {
 export async function handleRegister() {
     const user = document.getElementById('reg-user').value.trim();
     const pass = document.getElementById('reg-pass').value.trim();
+    const passConfirm = document.getElementById('reg-pass-confirm').value.trim();
     const role = document.getElementById('reg-role').value;
-    if (!user || !pass) return alert("Vui lòng nhập đủ thông tin!");
+    if (!user || !pass || !passConfirm) return alert("Vui lòng nhập đủ thông tin!");
 
     if (user.length < 3) {
         return alert("Tên đăng nhập phải có ít nhất 3 ký tự!");
@@ -28,6 +29,9 @@ export async function handleRegister() {
     }
     if (pass.length < 6) {
         return alert("Mật khẩu phải có ít nhất 6 ký tự!");
+    }
+    if (pass !== passConfirm) {
+        return alert("Mật khẩu xác nhận không khớp!");
     }
 
     try {
