@@ -19,12 +19,33 @@ export async function submitHomepageFeedback() {
     const phone = phoneInput.value.trim();
     const message = messageInput.value.trim();
 
+    if (!name) {
+        alert("Vui lòng nhập Họ và tên!");
+        return;
+    }
+    const nameRegex = /^[a-zA-Z\sÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểếệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ\s]+$/;
+    if (!nameRegex.test(name)) {
+        alert("Họ tên chỉ được chứa chữ cái và khoảng trắng!");
+        return;
+    }
+    if (!name.includes(' ')) {
+        alert("Họ tên phải gồm ít nhất 2 từ (có dấu cách)!");
+        return;
+    }
+
     if (!phone) {
         alert("Vui lòng nhập Số điện thoại!");
         return;
     }
-    if (!message) {
-        alert("Vui lòng nhập Nội dung lời nhắn!");
+    const phoneClean = phone.replace(/[\s-]/g, '');
+    const phoneRegex = /^(\+84|84|0)(3|5|7|8|9)\d{8}$/;
+    if (!phoneRegex.test(phoneClean)) {
+        alert("Số điện thoại không hợp lệ (phải bắt đầu bằng 0, 84 hoặc +84 và gồm 10 chữ số)!");
+        return;
+    }
+
+    if (!message || message.length < 5) {
+        alert("Nội dung tin nhắn phải có ít nhất 5 ký tự!");
         return;
     }
 
@@ -162,10 +183,31 @@ export async function sendGuestChatMessage() {
     const phone = phoneInput.value.trim();
     const message = messageInput.value.trim();
 
+    if (!name) {
+        alert("Vui lòng nhập Họ và tên ở góc trên!");
+        return;
+    }
+    const nameRegex = /^[a-zA-Z\sÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểếệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ\s]+$/;
+    if (!nameRegex.test(name)) {
+        alert("Họ tên chỉ được chứa chữ cái và khoảng trắng!");
+        return;
+    }
+    if (!name.includes(' ')) {
+        alert("Họ tên phải gồm ít nhất 2 từ (có dấu cách)!");
+        return;
+    }
+
     if (!phone) {
         alert("Vui lòng nhập Số điện thoại liên hệ ở góc trên!");
         return;
     }
+    const phoneClean = phone.replace(/[\s-]/g, '');
+    const phoneRegex = /^(\+84|84|0)(3|5|7|8|9)\d{8}$/;
+    if (!phoneRegex.test(phoneClean)) {
+        alert("Số điện thoại không hợp lệ (phải bắt đầu bằng 0, 84 hoặc +84 và gồm 10 chữ số)!");
+        return;
+    }
+
     if (!message) {
         return; // Don't send empty messages
     }

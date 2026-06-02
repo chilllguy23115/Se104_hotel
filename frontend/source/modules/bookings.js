@@ -37,6 +37,50 @@ export async function confirmCheckIn() {
         return;
     }
 
+    const name = document.getElementById('guest-name').value.trim();
+    const idNum = document.getElementById('guest-id').value.trim();
+    const dob = document.getElementById('guest-dob').value.trim();
+
+    if (!name || !idNum || !dob) {
+        alert("Vui lòng nhập đầy đủ thông tin Khách hàng!");
+        return;
+    }
+
+    const nameRegex = /^[a-zA-Z\sÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểếệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ\s]+$/;
+    if (!nameRegex.test(name)) {
+        alert("Họ tên khách hàng chỉ được chứa chữ cái và khoảng trắng!");
+        return;
+    }
+    if (!name.includes(' ')) {
+        alert("Họ tên khách hàng phải có ít nhất một dấu cách (bao gồm Họ và Tên)!");
+        return;
+    }
+
+    if (!/^\d+$/.test(idNum)) {
+        alert("Số CCCD phải là dãy số!");
+        return;
+    }
+    if (idNum.length !== 9 && idNum.length !== 12) {
+        alert("Số CCCD phải có 9 hoặc 12 chữ số!");
+        return;
+    }
+
+    const dobDate = new Date(dob);
+    if (isNaN(dobDate.getTime())) {
+        alert("Định dạng ngày sinh không hợp lệ!");
+        return;
+    }
+    const today = new Date();
+    let age = today.getFullYear() - dobDate.getFullYear();
+    const m = today.getMonth() - dobDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dobDate.getDate())) {
+        age--;
+    }
+    if (age < 18) {
+        alert("Khách hàng phải từ 18 tuổi trở lên!");
+        return;
+    }
+
     const [year, month, day] = dateVal.split('-').map(Number);
     const [hour, minute] = timeVal.split(':').map(Number);
     const selectedTime = new Date(year, month - 1, day, hour, minute);
@@ -50,9 +94,9 @@ export async function confirmCheckIn() {
     const payload = { 
         room_id: currentRoomId, 
         user_id: currentUser.id, 
-        guest_name: document.getElementById('guest-name').value, 
-        guest_id_number: document.getElementById('guest-id').value, 
-        guest_dob: document.getElementById('guest-dob').value, 
+        guest_name: name, 
+        guest_id_number: idNum, 
+        guest_dob: dob, 
         rental_type: document.getElementById('rental-type').value,
         check_in_time: selectedTime.toISOString()
     };

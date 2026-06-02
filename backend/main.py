@@ -225,6 +225,8 @@ class CheckInRequest(BaseModel):
     def validate_name(cls, v):
         if not re.match(r"^[a-zA-Z\sÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểếệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ\s]+$", v):
             raise ValueError('Họ tên chỉ được chứa chữ cái và khoảng trắng')
+        if ' ' not in v.strip():
+            raise ValueError('Họ tên phải có ít nhất một dấu cách (bao gồm Họ và Tên)')
         return v
 
     @field_validator('guest_id_number')
@@ -276,6 +278,22 @@ class UserCreateRequest(BaseModel):
     username: str
     password: str
     role: UserRoleEnum
+
+    @field_validator('username')
+    @classmethod
+    def validate_username(cls, v):
+        if len(v) < 3:
+            raise ValueError('Tên đăng nhập phải có ít nhất 3 ký tự')
+        if not re.match(r"^[a-zA-Z0-9_]+$", v):
+            raise ValueError('Tên đăng nhập chỉ được chứa chữ cái, chữ số và dấu gạch dưới')
+        return v
+
+    @field_validator('password')
+    @classmethod
+    def validate_password(cls, v):
+        if len(v) < 6:
+            raise ValueError('Mật khẩu phải có ít nhất 6 ký tự')
+        return v
 
 class RoomCategoryUpdateRequest(BaseModel):
     price_first_hour: int
@@ -337,17 +355,68 @@ class FeedbackCreate(BaseModel):
     phone_number: str
     message: str
 
+    @field_validator('guest_name')
+    @classmethod
+    def validate_name(cls, v):
+        if not re.match(r"^[a-zA-Z\sÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểếệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ\s]+$", v):
+            raise ValueError('Họ tên chỉ được chứa chữ cái và khoảng trắng')
+        if ' ' not in v.strip():
+            raise ValueError('Họ tên phải có ít nhất một dấu cách (bao gồm Họ và Tên)')
+        return v
+
+    @field_validator('email')
+    @classmethod
+    def validate_email(cls, v):
+        if "@" not in v or ".com" not in v:
+            raise ValueError('Email phải chứa ký tự @ và có đuôi tên miền .com')
+        return v
+
     @field_validator('phone_number')
     @classmethod
     def validate_phone(cls, v):
-        if not v or not re.match(r'^\+?[\d\s-]{9,15}$', v):
-            raise ValueError('Số điện thoại không hợp lệ (phải gồm 9-15 chữ số)')
+        v_clean = re.sub(r'[\s-]', '', v)
+        if not re.match(r'^(\+84|84|0)(3|5|7|8|9)\d{8}$', v_clean):
+            raise ValueError('Số điện thoại không hợp lệ (phải bắt đầu bằng 0, 84 hoặc +84 và gồm 10 chữ số)')
+        return v_clean
+
+    @field_validator('message')
+    @classmethod
+    def validate_msg(cls, v):
+        if len(v.strip()) < 5:
+            raise ValueError('Nội dung tin nhắn phải có ít nhất 5 ký tự')
         return v
 
 class ChatMessageCreate(BaseModel):
     message: str
     guest_name: Optional[str] = None
     phone_number: Optional[str] = None
+
+    @field_validator('guest_name')
+    @classmethod
+    def validate_name(cls, v):
+        if v:
+            if not re.match(r"^[a-zA-Z\sÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểếệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ\s]+$", v):
+                raise ValueError('Họ tên chỉ được chứa chữ cái và khoảng trắng')
+            if ' ' not in v.strip():
+                raise ValueError('Họ tên phải có ít nhất một dấu cách (bao gồm Họ và Tên)')
+        return v
+
+    @field_validator('phone_number')
+    @classmethod
+    def validate_phone(cls, v):
+        if v:
+            v_clean = re.sub(r'[\s-]', '', v)
+            if not re.match(r'^(\+84|84|0)(3|5|7|8|9)\d{8}$', v_clean):
+                raise ValueError('Số điện thoại không hợp lệ (phải bắt đầu bằng 0, 84 hoặc +84 và gồm 10 chữ số)')
+            return v_clean
+        return v
+
+    @field_validator('message')
+    @classmethod
+    def validate_msg(cls, v):
+        if len(v.strip()) == 0:
+            raise ValueError('Tin nhắn không được bỏ trống')
+        return v
 
 class ChatReplyCreate(BaseModel):
     message: str

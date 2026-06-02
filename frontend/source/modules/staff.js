@@ -15,10 +15,21 @@ export async function fetchStaff() {
 }
 
 export async function handleRegister() {
-    const user = document.getElementById('reg-user').value;
-    const pass = document.getElementById('reg-pass').value;
+    const user = document.getElementById('reg-user').value.trim();
+    const pass = document.getElementById('reg-pass').value.trim();
     const role = document.getElementById('reg-role').value;
     if (!user || !pass) return alert("Vui lòng nhập đủ thông tin!");
+
+    if (user.length < 3) {
+        return alert("Tên đăng nhập phải có ít nhất 3 ký tự!");
+    }
+    if (!/^[a-zA-Z0-9_]+$/.test(user)) {
+        return alert("Tên đăng nhập chỉ được chứa chữ cái, số và dấu gạch dưới (không chứa dấu cách hay ký tự đặc biệt)!");
+    }
+    if (pass.length < 6) {
+        return alert("Mật khẩu phải có ít nhất 6 ký tự!");
+    }
+
     try {
         const res = await fetch(`${API_URL}/register`, {
             method: 'POST',
@@ -30,7 +41,11 @@ export async function handleRegister() {
             window.toggleAuth('login');
         } else { 
             const err = await res.json();
-            alert(err.detail || "Đã có lỗi xảy ra!"); 
+            if (Array.isArray(err.detail)) {
+                alert(err.detail.map(d => d.msg).join("\n"));
+            } else {
+                alert(err.detail || "Đã có lỗi xảy ra!");
+            }
         }
     } catch (e) {
         console.error(e);
