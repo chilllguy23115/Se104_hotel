@@ -270,56 +270,37 @@
                     <p class="text-sm text-gray-400 uppercase tracking-widest font-bold">Kết nối với chúng tôi bất cứ khi nào bạn cần hỗ trợ</p>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <!-- Contact Cards -->
-                    <div class="lg:col-span-1 space-y-4">
-                        <div class="fluent-card bg-white p-5 flex items-start gap-4 border border-gray-100">
-                            <div class="p-3 bg-blue-50 text-blue-600 rounded-xl shadow-sm">
-                                <i data-lucide="map-pin" class="w-5 h-5"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-sm font-bold text-gray-800 uppercase">Địa chỉ</h4>
-                                <p class="text-xs text-gray-500 mt-1 leading-relaxed">Khu phố 6, P. Linh Trung, Tp. Thủ Đức, Tp. Hồ Chí Minh</p>
-                            </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Address Card -->
+                    <div class="fluent-card bg-white p-6 flex flex-col items-center text-center gap-4 border border-gray-100 shadow-sm">
+                        <div class="p-4 bg-blue-50 text-blue-600 rounded-full shadow-inner">
+                            <i data-lucide="map-pin" class="w-6 h-6"></i>
                         </div>
-
-                        <div class="fluent-card bg-white p-5 flex items-start gap-4 border border-gray-100">
-                            <div class="p-3 bg-indigo-50 text-indigo-600 rounded-xl shadow-sm">
-                                <i data-lucide="phone" class="w-5 h-5"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-sm font-bold text-gray-800 uppercase">Hotline</h4>
-                                <p class="text-xs text-gray-500 mt-1 hover:text-indigo-600 transition-colors font-bold">+84 28 372 52002</p>
-                            </div>
-                        </div>
-
-                        <div class="fluent-card bg-white p-5 flex items-start gap-4 border border-gray-100">
-                            <div class="p-3 bg-green-50 text-green-600 rounded-xl shadow-sm">
-                                <i data-lucide="mail" class="w-5 h-5"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-sm font-bold text-gray-800 uppercase">Email</h4>
-                                <p class="text-xs text-gray-500 mt-1 hover:text-green-600 transition-colors font-bold">support@hotelpro.vn</p>
-                            </div>
+                        <div>
+                            <h4 class="text-base font-bold text-gray-800 uppercase tracking-wide">Địa chỉ</h4>
+                            <p class="text-sm text-gray-500 mt-2 leading-relaxed">Khu phố 6, P. Linh Trung, Tp. Thủ Đức, Tp. Hồ Chí Minh</p>
                         </div>
                     </div>
 
-                    <!-- Interactive Contact Mockup (Simulating Map / Form) -->
-                    <div class="lg:col-span-2">
-                        <div class="fluent-card bg-white p-6 border border-gray-100 h-full flex flex-col justify-between">
-                            <div class="space-y-4">
-                                <h4 class="text-sm font-bold text-gray-800 uppercase flex items-center gap-2">
-                                    <i data-lucide="send" class="w-4 h-4 text-blue-600"></i> Gửi yêu cầu tư vấn
-                                </h4>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <input type="text" id="home-contact-name" placeholder="Họ và tên" class="w-full text-xs px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
-                                    <input type="text" id="home-contact-phone" placeholder="Số điện thoại" class="w-full text-xs px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <textarea id="home-contact-message" placeholder="Nội dung cần hỗ trợ..." rows="4" class="w-full text-xs px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
-                            </div>
-                            <div class="mt-4 text-right">
-                                <button onclick="window.submitHomepageFeedback()" class="win-btn win-btn-primary shadow-lg shadow-blue-100">Gửi tin nhắn</button>
-                            </div>
+                    <!-- Hotline Card -->
+                    <div class="fluent-card bg-white p-6 flex flex-col items-center text-center gap-4 border border-gray-100 shadow-sm">
+                        <div class="p-4 bg-indigo-50 text-indigo-600 rounded-full shadow-inner">
+                            <i data-lucide="phone" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-base font-bold text-gray-800 uppercase tracking-wide">Hotline</h4>
+                            <p class="text-sm text-gray-500 mt-2 hover:text-indigo-600 transition-colors font-bold">+84 28 372 52002</p>
+                        </div>
+                    </div>
+
+                    <!-- Email Card -->
+                    <div class="fluent-card bg-white p-6 flex flex-col items-center text-center gap-4 border border-gray-100 shadow-sm">
+                        <div class="p-4 bg-green-50 text-green-600 rounded-full shadow-inner">
+                            <i data-lucide="mail" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-base font-bold text-gray-800 uppercase tracking-wide">Email</h4>
+                            <p class="text-sm text-gray-500 mt-2 hover:text-green-600 transition-colors font-bold">support@hotelpro.vn</p>
                         </div>
                     </div>
                 </div>
