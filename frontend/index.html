@@ -1047,17 +1047,22 @@
                     <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Phương thức thanh toán</p>
                     <div class="flex gap-6">
                         <label class="flex items-center gap-2 cursor-pointer group">
-                            <input type="radio" name="pay-method" value="CASH" checked class="w-4 h-4 text-blue-600">
+                            <input type="radio" name="pay-method" value="CASH" checked class="w-4 h-4 text-blue-600" onchange="document.getElementById('qrcode-display-container').classList.add('hidden')">
                             <span
                                 class="text-sm font-bold text-gray-700 group-hover:text-blue-600 transition-colors">Tiền
                                 mặt</span>
                         </label>
                         <label class="flex items-center gap-2 cursor-pointer group">
-                            <input type="radio" name="pay-method" value="TRANSFER" class="w-4 h-4 text-blue-600">
+                            <input type="radio" name="pay-method" value="TRANSFER" class="w-4 h-4 text-blue-600" onchange="document.getElementById('qrcode-display-container').classList.remove('hidden')">
                             <span
                                 class="text-sm font-bold text-gray-700 group-hover:text-blue-600 transition-colors">Chuyển
                                 khoản</span>
                         </label>
+                    </div>
+                    <!-- QR Code Display Container -->
+                    <div id="qrcode-display-container" class="hidden mt-4 p-4 bg-white rounded-xl border border-gray-200 flex flex-col items-center justify-center space-y-2">
+                        <p class="text-xs font-black text-gray-500 uppercase tracking-wider">Quét mã QR để thanh toán chuyển khoản</p>
+                        <img src="/database/qrcode/qrcode.jpg" alt="Mã QR Thanh Toán" class="max-w-[200px] h-auto rounded-lg border border-gray-100 shadow-md">
                     </div>
                 </div>
             </div>

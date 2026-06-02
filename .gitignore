@@ -1,2 +1,3 @@
 database/*.db
 frontend/uploads/*.png
+frontend/database/qrcode/*.jpg

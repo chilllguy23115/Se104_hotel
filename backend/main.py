@@ -162,10 +162,10 @@ async def lifespan(app: FastAPI):
     db = SessionLocal()
     try:
         if db.query(User).count() == 0:
-            db.add(User(username="admin", password="admin", role=UserRoleEnum.ADMIN))
-            db.add(User(username="staff", password="123", role=UserRoleEnum.RECEPTIONIST))
-            db.add(User(username="janitor", password="123", role=UserRoleEnum.JANITOR))
-            db.add(User(username="guest", password="123", role=UserRoleEnum.GUEST))
+            db.add(User(username="admin", password="123456", role=UserRoleEnum.ADMIN))
+            db.add(User(username="staff", password="123456", role=UserRoleEnum.RECEPTIONIST))
+            db.add(User(username="janitor", password="123456", role=UserRoleEnum.JANITOR))
+            db.add(User(username="guest", password="123456", role=UserRoleEnum.GUEST))
             
             cat_std = RoomCategory(name="STANDARD", price_first_hour=60000, price_next_hour=20000, price_overnight=150000, price_daily=250000)
             cat_vip = RoomCategory(name="VIP", price_first_hour=100000, price_next_hour=40000, price_overnight=250000, price_daily=450000)
@@ -935,6 +935,12 @@ def reply_to_guest(
     db.add(new_reply)
     db.commit()
     return {"message": "Đã gửi phản hồi thành công!"}
+
+# Mount database qrcode directory
+QRCODE_DIR = os.path.join(BASE_DIR, "database", "qrcode")
+if not os.path.exists(QRCODE_DIR):
+    os.makedirs(QRCODE_DIR, exist_ok=True)
+app.mount("/database/qrcode", StaticFiles(directory=QRCODE_DIR), name="qrcode")
 
 # Mount static files for frontend
 FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")

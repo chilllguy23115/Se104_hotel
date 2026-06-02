@@ -184,6 +184,12 @@ export async function openBillModal(bookingId) {
             btn.classList.remove('hidden');
             payContainer.classList.remove('hidden');
             btn.onclick = () => window.confirmCheckOut(bookingId);
+            
+            // Reset to CASH and hide QR code when opening the checkout modal
+            const cashRadio = document.querySelector('input[name="pay-method"][value="CASH"]');
+            if (cashRadio) cashRadio.checked = true;
+            const qrContainer = document.getElementById('qrcode-display-container');
+            if (qrContainer) qrContainer.classList.add('hidden');
         }
         lucide.createIcons();
     } catch (e) { console.error(e); }
