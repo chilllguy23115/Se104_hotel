@@ -770,7 +770,12 @@ def preview_bill(booking_id: int, db: Session = Depends(get_db)):
     if booking.rental_type == RentalTypeEnum.HOURLY:
         room_charge = category.price_first_hour + (max(0, hours_stayed - 1) * category.price_next_hour)
     elif booking.rental_type == RentalTypeEnum.OVERNIGHT:
-        room_charge = category.price_overnight
+        # Thời gian qua đêm tối đa là 12 tiếng, quá 12 tiếng sẽ phụ thu thêm mỗi giờ bằng giá price_next_hour
+        max_overnight_hours = 12
+        if hours_stayed <= max_overnight_hours:
+            room_charge = category.price_overnight
+        else:
+            room_charge = category.price_overnight + ((hours_stayed - max_overnight_hours) * category.price_next_hour)
     elif booking.rental_type == RentalTypeEnum.DAILY:
         room_charge = math.ceil(hours_stayed / 24) * category.price_daily
         
@@ -804,7 +809,12 @@ def check_out_room(booking_id: int, req: CheckoutRequest, db: Session = Depends(
     if booking.rental_type == RentalTypeEnum.HOURLY:
         room_charge = category.price_first_hour + (max(0, hours_stayed - 1) * category.price_next_hour)
     elif booking.rental_type == RentalTypeEnum.OVERNIGHT:
-        room_charge = category.price_overnight
+        # Thời gian qua đêm tối đa là 12 tiếng, quá 12 tiếng sẽ phụ thu thêm mỗi giờ bằng giá price_next_hour
+        max_overnight_hours = 12
+        if hours_stayed <= max_overnight_hours:
+            room_charge = category.price_overnight
+        else:
+            room_charge = category.price_overnight + ((hours_stayed - max_overnight_hours) * category.price_next_hour)
     elif booking.rental_type == RentalTypeEnum.DAILY:
         room_charge = math.ceil(hours_stayed / 24) * category.price_daily
         
